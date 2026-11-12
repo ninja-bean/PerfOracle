@@ -1,0 +1,33 @@
+# Normalise text files across platforms
+* text=auto eol=lf
+
+# Source and documentation
+*.py     text eol=lf
+*.md     text eol=lf
+*.toml   text eol=lf
+*.yaml   text eol=lf
+*.yml    text eol=lf
+*.json   text eol=lf
+*.cff    text eol=lf
+*.sh     text eol=lf
+*.ps1    text eol=crlf
+
+# Windows-native project files
+*.sln    text eol=crlf
+*.vcxproj text eol=crlf
+
+# Binary assets — never diff, never convert
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.pdf    binary
+*.ico    binary
+
+# Large / versioned data artefacts (Git LFS)
+*.parquet  filter=lfs diff=lfs merge=lfs -text
+*.feather  filter=lfs diff=lfs merge=lfs -text
+*.arrow    filter=lfs diff=lfs merge=lfs -text
+*.onnx     filter=lfs diff=lfs merge=lfs -text
+
+# Reproducible-build outputs
+*.pyc    binary

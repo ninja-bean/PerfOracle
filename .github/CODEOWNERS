@@ -1,0 +1,16 @@
+# CODEOWNERS — https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# Policy: every pull request to `main` requires ONE approving review from a
+# repository owner listed below — @xrayian (Rayian) or @ninja-bean (Injabin).
+# This is enforced by the `main` branch ruleset, not by convention alone.
+#
+# Work-stream leads are documented for routing only. They may review and
+# comment, but the branch rule requires a code-owner approval.
+#
+#   WS1 harness & embedded targets .... @xrayian
+#   WS2 corpus & variant generation ... @ninja-bean
+#   WS3 data pipeline & metrics ....... @Janyraad
+#   WS4 predictor & tool .............. @jahidhassan18
+#
+# A single rule covers the whole tree so that either owner can approve any PR.
+* @xrayian @ninja-bean

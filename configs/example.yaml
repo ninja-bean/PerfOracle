@@ -1,0 +1,70 @@
+# Example experiment configuration.
+#
+# A sweep is a cross-product of the axes below, minus unsupported
+# language x target combinations, which are recorded as `unsupported`.
+# Everything needed to reproduce a run lives in this file plus the
+# pinned toolchain manifest.
+
+experiment:
+  id: pilot-2026-11
+  description: Phase A pilot — 5 algorithms end-to-end across the core targets
+  dataset_version: 0.1.0
+
+corpus:
+  algorithms:
+    - fizzbuzz
+    - bubble_sort
+    - binary_search
+    - fibonacci
+    - crc32
+  languages:
+    - python
+    - c
+    - rust
+  tiers:
+    - T0
+    - T1
+    - T2
+    - T3
+
+targets:
+  - m5
+  - rpi5
+  - rpi_zero_2w
+  - esp32
+  - esp8266
+  - teensy41
+
+protocol:
+  input_sizes: [16, 32, 64, 128, 256, 512, 1024, 2048]
+  repetitions: 5
+  warmup_runs:
+    desktop: 2
+    sbc: 1
+    mcu: 0
+  timeout_s: 120
+  cap_input_by_memory: true
+
+conditions:
+  pin_cpu_governor: true
+  record_ambient_temperature: true
+  require_quiet_host: true
+
+sidecar:
+  enabled: true
+  sample_interval_ms: 100
+  power_sensor: ina226
+  invalid_run_policy: requeue
+  max_requeues: 2
+
+output:
+  format: parquet
+  partition_by: [target, language]
+  write_cards: true
+  directory: data/0.1.0
+
+# Provenance is stamped into manifest.json at run time.
+provenance:
+  record_git_sha: true
+  record_toolchain_versions: true
+  record_host_metadata: true

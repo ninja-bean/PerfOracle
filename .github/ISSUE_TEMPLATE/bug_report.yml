@@ -1,0 +1,72 @@
+name: Bug report
+description: Report a defect in the harness, metrics pipeline, predictor, or CLI.
+title: "bug: "
+labels: ["bug", "triage"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a defect. Please include enough detail
+        for us to reproduce it. **Do not report security vulnerabilities here** —
+        see `SECURITY.md`.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - Benchmark harness
+        - Embedded target / adapter
+        - Corpus / variant generation
+        - Metrics / complexity fitting
+        - Dataset schema
+        - Predictor / model
+        - Card renderer
+        - CLI / tooling
+        - CI / repository
+        - Documentation
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: A clear, concise description of the defect.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Run `perforacle analyze benchmarks/corpus/sorting/python/T1.py --target esp32`
+        2. Observe ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Python version, target board, runtime and commit SHA.
+      placeholder: |
+        - OS: Ubuntu 24.04 / macOS 15 / Windows 11
+        - Python: 3.12.10
+        - Target: ESP32-S3 (physical board)
+        - Runtime: MicroPython 1.23
+        - Commit: 0a1b2c3
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Paste tracebacks or measurement output. Redact credentials.
+      render: shell
+    validations:
+      required: false

@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/ninja-bean/PerfOracle/security/advisories/new
+    about: Report security issues privately. Do not open a public issue.
+  - name: Project proposal
+    url: https://github.com/ninja-bean/PerfOracle/blob/main/docs/proposal.md
+    about: Read the FYDP proposal before proposing scope changes.
+  - name: Contributing guide
+    url: https://github.com/ninja-bean/PerfOracle/blob/main/CONTRIBUTING.md
+    about: Branching, commit conventions, review policy and corpus contribution rules.

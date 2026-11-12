@@ -1,0 +1,41 @@
+cff-version: 1.2.0
+message: "If you use PerfOracle in academic work, please cite it using these metadata."
+title: "PerfOracle: Predicting Algorithm Performance Across Programming Languages and Hardware, from Microcontrollers to Edge AI"
+abstract: >-
+  PerfOracle is a system that predicts the performance of unseen source code on a
+  specified language runtime and hardware target. It combines an automated
+  benchmark harness and measured multi-hardware dataset with a learned predictor
+  that maps source code, language and a hardware descriptor to runtime, peak
+  memory, empirical complexity, energy, estimated carbon emissions and
+  fit-on-target probability.
+type: software
+version: 0.1.0
+date-released: "2026-11-13"
+license: Apache-2.0
+repository-code: "https://github.com/ninja-bean/PerfOracle"
+url: "https://github.com/ninja-bean/PerfOracle"
+keywords:
+  - performance prediction
+  - benchmarking
+  - embedded systems
+  - edge computing
+  - empirical complexity
+  - energy efficiency
+  - code representation learning
+authors:
+  - family-names: Mahi
+    given-names: Rayian Bin Shiraz
+    affiliation: "Department of CSE, United International University"
+    alias: xrayian
+  - family-names: Alam
+    given-names: Injabin
+    affiliation: "Department of CSE, United International University"
+    alias: ninja-bean
+  - family-names: Raad
+    given-names: Fardin Jany
+    affiliation: "Department of CSE, United International University"
+    alias: Janyraad
+  - family-names: Sabbir
+    given-names: Jahid Hassan
+    affiliation: "Department of CSE, United International University"
+    alias: jahidhassan18
