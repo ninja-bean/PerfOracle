@@ -1,0 +1,48 @@
+name: Feature request
+description: Propose a new capability, target, language, or experiment.
+title: "feat: "
+labels: ["enhancement", "triage"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for anything that is not a defect. Please state clearly
+        whether the proposal is **core scope** or **extended scope** as defined in
+        the project proposal.
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - Core scope (committed)
+        - Extended scope (if time permits)
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: What developer or research need does this address?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the approach, affected components and any alternatives considered.
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact on the dataset, model, or evaluation
+      description: Does this change the schema, measurement protocol, or evaluation plan?
+    validations:
+      required: false
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks and open questions
+    validations:
+      required: false

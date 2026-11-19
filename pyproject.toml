@@ -1,0 +1,109 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "perforacle"
+version = "0.1.0"
+description = "Predict algorithm performance across programming languages and hardware, from microcontrollers to edge AI."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Rayian Bin Shiraz Mahi" },
+  { name = "Injabin Alam" },
+  { name = "Fardin Jany Raad" },
+  { name = "Jahid Hassan Sabbir" },
+]
+keywords = [
+  "performance-prediction",
+  "benchmarking",
+  "embedded-systems",
+  "edge-ai",
+  "energy-efficiency",
+  "machine-learning",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering",
+  "Topic :: System :: Benchmark",
+]
+
+dependencies = [
+  "typer>=0.12",
+  "pydantic>=2.7",
+  "pyyaml>=6.0",
+  "pandas>=2.2",
+  "polars>=1.0",
+  "numpy>=1.26",
+  "scipy>=1.13",
+  "matplotlib>=3.8",
+  "psutil>=5.9",
+]
+
+[project.optional-dependencies]
+ml = [
+  "torch>=2.3",
+  "scikit-learn>=1.4",
+  "lightgbm>=4.3",
+  "transformers>=4.41",
+]
+dev = [
+  "pytest>=8.2",
+  "pytest-cov>=5.0",
+  "ruff>=0.5",
+  "mypy>=1.10",
+  "pre-commit>=3.7",
+]
+docs = [
+  "mkdocs>=1.6",
+  "mkdocs-material>=9.5",
+]
+
+[project.scripts]
+perforacle = "perforacle.cli:app"
+
+[project.urls]
+Homepage = "https://github.com/ninja-bean/PerfOracle"
+Documentation = "https://github.com/ninja-bean/PerfOracle/tree/main/docs"
+Issues = "https://github.com/ninja-bean/PerfOracle/issues"
+Changelog = "https://github.com/ninja-bean/PerfOracle/releases"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/perforacle"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-ra --strict-markers --strict-config"
+testpaths = ["tests"]
+markers = [
+  "slow: tests that take longer than a few seconds",
+  "hardware: requires a physical board or sensor",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "C4", "SIM", "RUF"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.mypy]
+python_version = "3.11"
+files = ["src"]
+strict = true
+warn_unused_ignores = true
