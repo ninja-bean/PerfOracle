@@ -37,11 +37,32 @@ export default function App() {
   const [benchmarks, setBenchmarks] = useState(initialBenchmarks);
 
   // Platform Site Mode: 'site1' (Ground Truth Studio) or 'site2' (ML Predictor)
-  const [activeSite, setActiveSite] = useState('site2');
+  const [activeSite, setActiveSite] = useState(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('site') === '1' || params.get('site') === 'site1') return 'site1';
+      if (params.get('site') === '2' || params.get('site') === 'site2') return 'site2';
+    } catch (_) {}
+    return 'site1'; // Default to Site 1
+  });
 
   // Navigation states for Site 1 & Site 2
-  const [site1ActiveTab, setSite1ActiveTab] = useState('overview');
-  const [site2ActiveTab, setSite2ActiveTab] = useState('overview');
+  const [site1ActiveTab, setSite1ActiveTab] = useState(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('tab') || 'overview';
+    } catch (_) {
+      return 'overview';
+    }
+  });
+  const [site2ActiveTab, setSite2ActiveTab] = useState(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('tab2') || 'overview';
+    } catch (_) {
+      return 'overview';
+    }
+  });
 
   const [selectedAlgoForBench, setSelectedAlgoForBench] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
