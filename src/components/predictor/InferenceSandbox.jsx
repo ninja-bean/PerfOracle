@@ -17,6 +17,9 @@ import {
 } from 'lucide-react';
 import GlassCard from '../common/GlassCard';
 import Badge from '../common/Badge';
+import CustomSelect from '../common/CustomSelect';
+import LogSlider from '../common/LogSlider';
+import MemoryTape from '../common/MemoryTape';
 import { 
   hardwareTargets, 
   languageRuntimes, 
@@ -48,13 +51,28 @@ export default function InferenceSandbox({ onOpenReportCard }) {
   const selectedLanguage = languageRuntimes.find(l => l.id === selectedLanguageId) || languageRuntimes[0];
   const selectedModel = mlModelSpecs.find(m => m.id === selectedModelId) || mlModelSpecs[2];
 
-  // Quick preset sizes
-  const presets = [
-    { label: 'Tiny (N=100)', value: 100 },
-    { label: 'Medium (N=10k)', value: 10000 },
-    { label: 'Large (N=100k)', value: 100000 },
-    { label: 'Extreme (N=1M)', value: 1000000 }
-  ];
+  // Options for custom selects
+  const algoOptions = Object.entries(algorithmCurves).map(([id, a]) => ({
+    value: id,
+    label: a.name,
+    sub: a.theoretical,
+    tag: a.theoretical
+  }));
+
+  const hardwareOptions = hardwareTargets.map(h => ({
+    value: h.id,
+    label: h.name,
+    sub: `${h.clockMhz}MHz`,
+    tag: h.ramDisplay,
+    desc: `${h.arch} · ${h.nominalPowerWatts}W nominal`
+  }));
+
+  const languageOptions = languageRuntimes.map(l => ({
+    value: l.id,
+    label: l.name,
+    sub: l.type,
+    tag: `${l.factor}× factor`
+  }));
 
   return (
     <div className="space-y-8 page-enter">
@@ -68,7 +86,7 @@ export default function InferenceSandbox({ onOpenReportCard }) {
             <Badge variant="tier-s" size="xs">Live Neural Inference</Badge>
           </div>
           <p className="text-xs text-zinc-400 mt-1">
-            Simulate unseen workloads across physical hardware targets without flashing boards
+            Simulate unseen workloads across physical hardware targets without flashing physical boards
           </p>
         </div>
 
@@ -97,13 +115,14 @@ export default function InferenceSandbox({ onOpenReportCard }) {
             <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/[0.08]">
               <span className="text-xs font-mono uppercase tracking-wider text-zinc-400 font-bold flex items-center gap-2">
                 <Sliders className="w-3.5 h-3.5 text-white" />
-                Input Specifications
+                Workload Parameters
               </span>
               <button 
                 onClick={() => {
                   setSelectedAlgoId('ALG-001');
                   setSelectedHardwareId('esp32');
                   setSelectedLanguageId('c');
+                  setSelectedModelId('m1');
                   setInputN(10000);
                 }}
                 className="text-[11px] font-mono text-zinc-500 hover:text-white transition-colors flex items-center gap-1 cursor-pointer"
@@ -114,78 +133,41 @@ export default function InferenceSandbox({ onOpenReportCard }) {
             </div>
 
             <div className="space-y-4">
-              {/* Algorithm Selection */}
-              <div>
-                <label className="text-xs font-semibold text-zinc-300 block mb-1.5">
-                  Algorithm Under Test
-                </label>
-                <select
-                  value={selectedAlgoId}
-                  onChange={(e) => setSelectedAlgoId(e.target.value)}
-                  className="w-full px-3 py-2 text-xs rounded-xl glass-input cursor-pointer"
-                >
-                  {Object.entries(algorithmCurves).map(([id, algo]) => (
-                    <option key={id} value={id}>
-                      {algo.name} ({algo.theoretical})
-                    </option>
-                  ))}
-                </select>
-                <span className="text-[10px] text-zinc-500 font-mono block mt-1">
-                  Theoretical Complexity: {selectedAlgo.theoretical}
-                </span>
-              </div>
+              {/* Custom Algorithm Dropdown */}
+              <CustomSelect
+                label="Algorithm Under Test"
+                value={selectedAlgoId}
+                onChange={setSelectedAlgoId}
+                options={algoOptions}
+              />
 
-              {/* Hardware Target */}
+              {/* Custom Hardware Target Dropdown */}
+              <CustomSelect
+                label="Physical Hardware Target"
+                value={selectedHardwareId}
+                onChange={setSelectedHardwareId}
+                options={hardwareOptions}
+              />
+
+              {/* Custom Language Runtime Dropdown */}
+              <CustomSelect
+                label="Language Runtime & Optimization"
+                value={selectedLanguageId}
+                onChange={setSelectedLanguageId}
+                options={languageOptions}
+              />
+
+              {/* Model Estimator Selector */}
               <div>
                 <label className="text-xs font-semibold text-zinc-300 block mb-1.5 flex items-center justify-between">
-                  <span>Hardware Target</span>
-                  <span className="text-[10px] font-mono text-zinc-500">{selectedHardware.category}</span>
-                </label>
-                <select
-                  value={selectedHardwareId}
-                  onChange={(e) => setSelectedHardwareId(e.target.value)}
-                  className="w-full px-3 py-2 text-xs rounded-xl glass-input cursor-pointer"
-                >
-                  {hardwareTargets.map((hw) => (
-                    <option key={hw.id} value={hw.id}>
-                      {hw.name} — {hw.clockMhz}MHz ({hw.ramDisplay} RAM)
-                    </option>
-                  ))}
-                </select>
-                <div className="mt-1.5 p-2 rounded-lg bg-white/[0.03] border border-white/[0.06] text-[11px] text-zinc-400 font-mono flex items-center justify-between">
-                  <span>Arch: {selectedHardware.arch}</span>
-                  <span>Cap: {selectedHardware.ramDisplay}</span>
-                </div>
-              </div>
-
-              {/* Language / Runtime */}
-              <div>
-                <label className="text-xs font-semibold text-zinc-300 block mb-1.5">
-                  Language Runtime & Optimization
-                </label>
-                <select
-                  value={selectedLanguageId}
-                  onChange={(e) => setSelectedLanguageId(e.target.value)}
-                  className="w-full px-3 py-2 text-xs rounded-xl glass-input cursor-pointer"
-                >
-                  {languageRuntimes.map((lang) => (
-                    <option key={lang.id} value={lang.id}>
-                      {lang.name} ({lang.type})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Model Estimator */}
-              <div>
-                <label className="text-xs font-semibold text-zinc-300 block mb-1.5 flex items-center justify-between">
-                  <span>Inference Model Engine</span>
+                  <span>Inference Model Architecture</span>
                   <span className="text-[10px] font-mono text-zinc-400">Acc: {selectedModel.accuracyWithin2x}</span>
                 </label>
                 <div className="grid grid-cols-3 gap-2">
                   {mlModelSpecs.map((m) => (
                     <button
                       key={m.id}
+                      type="button"
                       onClick={() => setSelectedModelId(m.id)}
                       className={`py-2 px-2 rounded-xl text-center text-xs font-mono transition-all cursor-pointer ${
                         selectedModelId === m.id
@@ -200,43 +182,13 @@ export default function InferenceSandbox({ onOpenReportCard }) {
                 </div>
               </div>
 
-              {/* Input Size N Slider */}
-              <div className="pt-2 border-t border-white/[0.06] space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold text-zinc-300">
-                    Input Size (N)
-                  </label>
-                  <span className="font-mono text-xs text-white font-bold px-2 py-0.5 rounded bg-white/10">
-                    N = {inputN.toLocaleString()}
-                  </span>
-                </div>
-
-                <input
-                  type="range"
-                  min="100"
-                  max="1000000"
-                  step="500"
+              {/* Logarithmic Slider for N */}
+              <div className="pt-3 border-t border-white/[0.06]">
+                <LogSlider
                   value={inputN}
-                  onChange={(e) => setInputN(Number(e.target.value))}
-                  className="w-full accent-white cursor-pointer"
+                  onChange={setInputN}
+                  label="Workload Input Size (N)"
                 />
-
-                {/* Preset Chips */}
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {presets.map((preset) => (
-                    <button
-                      key={preset.value}
-                      onClick={() => setInputN(preset.value)}
-                      className={`px-2 py-1 rounded-lg text-[10px] font-mono transition-colors cursor-pointer ${
-                        inputN === preset.value
-                          ? 'bg-white text-black font-bold'
-                          : 'bg-white/[0.04] text-zinc-400 border border-white/[0.06] hover:text-white'
-                      }`}
-                    >
-                      {preset.label}
-                    </button>
-                  ))}
-                </div>
               </div>
             </div>
           </GlassCard>
@@ -267,10 +219,10 @@ export default function InferenceSandbox({ onOpenReportCard }) {
                       {prediction.predictedTier}
                     </Badge>
                   </div>
-                  <p className="text-xs text-zinc-400 mt-0.5">
+                  <p className="text-xs text-zinc-400 mt-0.5 leading-relaxed">
                     {prediction.fitsOnTarget 
-                      ? `Workload fits within ${selectedHardware.name} SRAM limit with ${100 - prediction.memoryUtilizationPct}% headroom.`
-                      : `Peak payload exceeds ${selectedHardware.name} total RAM (${selectedHardware.ramDisplay}). Microcontroller will trigger hard fault.`}
+                      ? `Workload fits comfortably within ${selectedHardware.name} SRAM limit with ${(100 - prediction.memoryUtilizationPct).toFixed(1)}% headroom remaining.`
+                      : `Peak payload exceeds ${selectedHardware.name} total RAM (${selectedHardware.ramDisplay}). Microcontroller will trigger hard fault or panic.`}
                   </p>
                 </div>
               </div>
@@ -290,7 +242,7 @@ export default function InferenceSandbox({ onOpenReportCard }) {
                   <Zap className="w-3.5 h-3.5 text-zinc-400" />
                   Execution Latency
                 </span>
-                <span className="text-[10px] font-mono text-zinc-500">±{prediction.uncertaintyPct}%</span>
+                <span className="text-[10px] font-mono text-zinc-500">±{prediction.uncertaintyPct}% conf</span>
               </div>
               
               <div className="flex items-baseline gap-2">
@@ -307,17 +259,17 @@ export default function InferenceSandbox({ onOpenReportCard }) {
               </div>
             </GlassCard>
 
-            {/* 2. Peak RAM Footprint */}
+            {/* 2. Peak RAM Footprint with Memory Tape */}
             <GlassCard>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[11px] font-mono text-zinc-500 uppercase tracking-wider flex items-center gap-1.5">
                   <HardDrive className="w-3.5 h-3.5 text-zinc-400" />
                   Peak RAM Footprint
                 </span>
-                <span className="text-[10px] font-mono text-zinc-500">Ceiling: {selectedHardware.ramDisplay}</span>
+                <span className="text-[10px] font-mono text-zinc-500">Cap: {selectedHardware.ramDisplay}</span>
               </div>
 
-              <div className="flex items-baseline gap-2">
+              <div className="flex items-baseline gap-2 mb-2">
                 <span className="text-3xl font-black text-white font-display">
                   {prediction.totalMemoryDisplay}
                 </span>
@@ -326,15 +278,13 @@ export default function InferenceSandbox({ onOpenReportCard }) {
                 </span>
               </div>
 
-              {/* Visual Ceiling Bar */}
-              <div className="w-full bg-white/[0.08] h-1.5 rounded-full mt-2.5 overflow-hidden">
-                <div 
-                  className={`h-full rounded-full transition-all ${
-                    prediction.memoryUtilizationPct > 90 ? 'bg-red-500' : 'bg-white'
-                  }`}
-                  style={{ width: `${Math.min(100, prediction.memoryUtilizationPct)}%` }}
-                />
-              </div>
+              {/* Memory Tape Bar */}
+              <MemoryTape
+                requiredBytes={prediction.totalMemoryBytes}
+                ceilingBytes={selectedHardware.ramBytes}
+                targetName={selectedHardware.name}
+                showDetails={false}
+              />
             </GlassCard>
 
             {/* 3. Energy & Power Consumption */}
@@ -361,7 +311,7 @@ export default function InferenceSandbox({ onOpenReportCard }) {
               </div>
             </GlassCard>
 
-            {/* 4. Carbon & Complexity Class */}
+            {/* 4. Carbon & Fit */}
             <GlassCard>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[11px] font-mono text-zinc-500 uppercase tracking-wider flex items-center gap-1.5">

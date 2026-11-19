@@ -15,6 +15,7 @@ import { mlModelSpecs } from '../../data/mlPredictorData';
 
 export default function ModelLeaderboard() {
   const [activeSplit, setActiveSplit] = useState('held_out_algo');
+  const [activeModelComparison, setActiveModelComparison] = useState('m1');
 
   const splits = [
     { id: 'held_out_algo', name: 'Held-Out Algorithm (Primary)', desc: 'Generalization to completely unseen source code' },
@@ -50,7 +51,52 @@ export default function ModelLeaderboard() {
     ]
   };
 
+  // Parity points for 45-degree scatter plot: (measured vs predicted)
+  const parityPoints = {
+    m1: [
+      { name: 'Quicksort N=1k', measured: 1.05, predicted: 1.08 },
+      { name: 'Quicksort N=10k', measured: 13.8, predicted: 14.1 },
+      { name: 'Dijkstra N=200', measured: 1.84, predicted: 1.90 },
+      { name: 'Dijkstra N=2k', measured: 31.5, predicted: 29.8 },
+      { name: 'Strassen N=64', measured: 5.12, predicted: 4.95 },
+      { name: 'AES-256 N=5k', measured: 4.52, predicted: 4.60 },
+      { name: 'FFT N=1k', measured: 2.10, predicted: 2.15 },
+      { name: 'FFT N=4k', measured: 9.80, predicted: 10.1 }
+    ],
+    b1: [
+      { name: 'Quicksort N=1k', measured: 1.05, predicted: 1.35 },
+      { name: 'Quicksort N=10k', measured: 13.8, predicted: 17.2 },
+      { name: 'Dijkstra N=200', measured: 1.84, predicted: 2.40 },
+      { name: 'Dijkstra N=2k', measured: 31.5, predicted: 24.1 },
+      { name: 'Strassen N=64', measured: 5.12, predicted: 6.80 },
+      { name: 'AES-256 N=5k', measured: 4.52, predicted: 5.40 },
+      { name: 'FFT N=1k', measured: 2.10, predicted: 2.70 },
+      { name: 'FFT N=4k', measured: 9.80, predicted: 13.5 }
+    ],
+    b0: [
+      { name: 'Quicksort N=1k', measured: 1.05, predicted: 0.40 },
+      { name: 'Quicksort N=10k', measured: 13.8, predicted: 4.00 },
+      { name: 'Dijkstra N=200', measured: 1.84, predicted: 0.65 },
+      { name: 'Dijkstra N=2k', measured: 31.5, predicted: 6.50 },
+      { name: 'Strassen N=64', measured: 5.12, predicted: 18.2 },
+      { name: 'AES-256 N=5k', measured: 4.52, predicted: 1.20 },
+      { name: 'FFT N=1k', measured: 2.10, predicted: 0.80 },
+      { name: 'FFT N=4k', measured: 9.80, predicted: 3.20 }
+    ]
+  };
+
   const currentMetrics = splitMetrics[activeSplit];
+  const activeParity = parityPoints[activeModelComparison];
+
+  // SVG dimensions for parity plot
+  const pSize = 260;
+  const pPad = 35;
+  const pMax = 35; // max latency ms for plotting
+
+  const toCoord = (val) => {
+    const frac = Math.min(1, Math.max(0, val / pMax));
+    return pPad + frac * (pSize - 2 * pPad);
+  };
 
   return (
     <div className="space-y-8 page-enter">
@@ -91,59 +137,170 @@ export default function ModelLeaderboard() {
         ))}
       </div>
 
-      {/* Evaluation Results Table */}
-      <GlassCard>
-        <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/[0.06]">
-          <span className="text-xs font-mono uppercase tracking-wider text-zinc-400 font-bold">
-            Split Performance Verification Matrix
-          </span>
-          <span className="text-[11px] font-mono text-zinc-500">
-            Split: {splits.find(s => s.id === activeSplit)?.name}
-          </span>
+      {/* Two Column Grid: Left Metrics Matrix (7 cols) | Right 45-Degree Parity Scatter Plot (5 cols) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        {/* Left Column: Evaluation Results Table */}
+        <div className="lg:col-span-7 space-y-6">
+          <GlassCard>
+            <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/[0.06]">
+              <span className="text-xs font-mono uppercase tracking-wider text-zinc-400 font-bold">
+                Split Performance Verification Matrix
+              </span>
+              <span className="text-[11px] font-mono text-zinc-500">
+                Split: {splits.find(s => s.id === activeSplit)?.name}
+              </span>
+            </div>
+
+            <div className="overflow-x-auto -mx-1">
+              <table className="w-full text-left font-mono text-xs">
+                <thead>
+                  <tr className="text-zinc-500 text-[10px] uppercase tracking-wider border-b border-white/[0.08]">
+                    <th className="pb-3 pr-4">Evaluation Metric</th>
+                    <th className="pb-3 pr-4">Target Threshold</th>
+                    <th className="pb-3 pr-4">B0</th>
+                    <th className="pb-3 pr-4">B1</th>
+                    <th className="pb-3 pr-4 text-white">M1 (Primary)</th>
+                    <th className="pb-3 text-right">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentMetrics.map((row, i) => (
+                    <tr key={i} className="border-b border-white/[0.04] last:border-0 hover:bg-white/[0.02] transition-colors">
+                      <td className="py-3 pr-4 font-sans font-semibold text-white">
+                        {row.metric}
+                      </td>
+                      <td className="py-3 pr-4 text-zinc-400">
+                        {row.target}
+                      </td>
+                      <td className="py-3 pr-4 text-zinc-500">
+                        {row.b0}
+                      </td>
+                      <td className="py-3 pr-4 text-zinc-300">
+                        {row.b1}
+                      </td>
+                      <td className="py-3 pr-4 text-white font-bold text-sm">
+                        {row.m1}
+                      </td>
+                      <td className="py-3 text-right">
+                        <span className="inline-flex items-center gap-1 text-[11px] text-emerald-400 font-sans font-bold">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          PASSED
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
         </div>
 
-        <div className="overflow-x-auto -mx-1">
-          <table className="w-full text-left font-mono text-xs">
-            <thead>
-              <tr className="text-zinc-500 text-[10px] uppercase tracking-wider border-b border-white/[0.08]">
-                <th className="pb-3 pr-4">Evaluation Metric</th>
-                <th className="pb-3 pr-4">Target Threshold</th>
-                <th className="pb-3 pr-4">B0 (Heuristic)</th>
-                <th className="pb-3 pr-4">B1 (LightGBM)</th>
-                <th className="pb-3 pr-4 text-white">M1 (Neural · Primary)</th>
-                <th className="pb-3 text-right">Target Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentMetrics.map((row, i) => (
-                <tr key={i} className="border-b border-white/[0.04] last:border-0 hover:bg-white/[0.02] transition-colors">
-                  <td className="py-3 pr-4 font-sans font-semibold text-white">
-                    {row.metric}
-                  </td>
-                  <td className="py-3 pr-4 text-zinc-400">
-                    {row.target}
-                  </td>
-                  <td className="py-3 pr-4 text-zinc-500">
-                    {row.b0}
-                  </td>
-                  <td className="py-3 pr-4 text-zinc-300">
-                    {row.b1}
-                  </td>
-                  <td className="py-3 pr-4 text-white font-bold text-sm">
-                    {row.m1}
-                  </td>
-                  <td className="py-3 text-right">
-                    <span className="inline-flex items-center gap-1 text-[11px] text-emerald-400 font-sans font-bold">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      PASSED
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {/* Right Column: 45-Degree Parity Scatter Plot */}
+        <div className="lg:col-span-5 space-y-6">
+          <GlassCard>
+            <div className="flex items-center justify-between mb-3 pb-3 border-b border-white/[0.06]">
+              <div>
+                <span className="text-xs font-mono uppercase tracking-wider text-zinc-300 font-bold block">
+                  Parity Plot (Measured vs Predicted)
+                </span>
+                <span className="text-[10px] font-mono text-zinc-500">
+                  Ideal fit lies precisely along 45° diagonal (y = x)
+                </span>
+              </div>
+
+              {/* Model Choice for Parity */}
+              <div className="flex items-center gap-1 bg-white/[0.04] p-1 rounded-lg border border-white/[0.08]">
+                {['b0', 'b1', 'm1'].map((m) => (
+                  <button
+                    key={m}
+                    onClick={() => setActiveModelComparison(m)}
+                    className={`px-2 py-0.5 rounded text-[10px] font-mono uppercase transition-all cursor-pointer ${
+                      activeModelComparison === m 
+                        ? 'bg-white text-black font-bold shadow' 
+                        : 'text-zinc-500 hover:text-white'
+                    }`}
+                  >
+                    {m}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Parity SVG */}
+            <div className="flex justify-center">
+              <svg viewBox={`0 0 ${pSize} ${pSize}`} className="w-64 h-64">
+                {/* Background Box */}
+                <rect x={pPad} y={pPad} width={pSize - 2 * pPad} height={pSize - 2 * pPad} fill="rgba(255,255,255,0.015)" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
+                
+                {/* 45° Diagonal Reference Line (y = x) */}
+                <line
+                  x1={pPad}
+                  y1={pSize - pPad}
+                  x2={pSize - pPad}
+                  y2={pPad}
+                  stroke="rgba(255,255,255,0.4)"
+                  strokeWidth="1.5"
+                  strokeDasharray="4 4"
+                />
+
+                {/* ±20% Error Margin Cone */}
+                <line
+                  x1={pPad}
+                  y1={pSize - pPad}
+                  x2={pSize - pPad}
+                  y2={pPad + (pSize - 2 * pPad) * 0.18}
+                  stroke="rgba(255,255,255,0.08)"
+                  strokeWidth="1"
+                />
+                <line
+                  x1={pPad}
+                  y1={pSize - pPad}
+                  x2={pSize - pPad - (pSize - 2 * pPad) * 0.18}
+                  y2={pPad}
+                  stroke="rgba(255,255,255,0.08)"
+                  strokeWidth="1"
+                />
+
+                {/* Parity Points */}
+                {activeParity.map((pt, i) => {
+                  const cx = toCoord(pt.measured);
+                  const cy = (pSize - pPad) - ((toCoord(pt.predicted) - pPad));
+                  const isTight = Math.abs(pt.measured - pt.predicted) / pt.measured <= 0.15;
+
+                  return (
+                    <g key={i} className="group cursor-pointer">
+                      <circle
+                        cx={cx}
+                        cy={cy}
+                        r="5"
+                        fill={isTight ? '#ffffff' : '#f87171'}
+                        stroke="#060608"
+                        strokeWidth="1.5"
+                      />
+                    </g>
+                  );
+                })}
+
+                {/* Axis Labels */}
+                <text x={pSize / 2} y={pSize - 8} textAnchor="middle" fill="rgba(255,255,255,0.4)" fontSize="9" fontFamily="JetBrains Mono">
+                  Measured Latency (ms) →
+                </text>
+                <text x={12} y={pSize / 2} textAnchor="middle" fill="rgba(255,255,255,0.4)" fontSize="9" fontFamily="JetBrains Mono" transform={`rotate(-90 12 ${pSize / 2})`}>
+                  Predicted (ms) →
+                </text>
+              </svg>
+            </div>
+
+            <div className="mt-2 text-center text-[10px] font-mono text-zinc-500">
+              {activeModelComparison === 'm1' && <span className="text-emerald-400 font-bold">M1: Tightly bounded along y = x (Spearman ρ = 0.91)</span>}
+              {activeModelComparison === 'b1' && <span className="text-zinc-300">B1: Moderate dispersion under complex memory recursion</span>}
+              {activeModelComparison === 'b0' && <span className="text-red-400">B0: Heavy systematic divergence (ignores cache walls)</span>}
+            </div>
+          </GlassCard>
         </div>
-      </GlassCard>
+
+      </div>
 
       {/* Model Architecture Deep-Dive */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

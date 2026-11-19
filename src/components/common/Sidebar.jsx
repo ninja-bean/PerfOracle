@@ -13,8 +13,7 @@ import {
   TrendingUp,
   HardDrive,
   Award,
-  Zap,
-  ArrowRight
+  Zap
 } from 'lucide-react';
 import Badge from './Badge';
 
@@ -151,30 +150,33 @@ export default function Sidebar({
           {/* Mobile Close Button */}
           <button 
             onClick={onClose}
-            className="lg:hidden p-1.5 rounded-xl text-zinc-500 hover:text-white hover:bg-white/10 transition-colors"
+            className="lg:hidden p-1.5 rounded-xl text-zinc-500 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Site Switcher Card in Sidebar */}
-        <div className="mt-4 p-1.5 rounded-xl bg-white/[0.03] border border-white/[0.08] grid grid-cols-2 gap-1 text-[11px] font-mono">
+        {/* Unified Mode Switcher Segment */}
+        <div className="mt-4 p-1 rounded-xl bg-white/[0.035] border border-white/[0.09] grid grid-cols-2 gap-1 text-[11px] font-mono">
           <button
+            type="button"
             onClick={() => onSwitchSite('site1')}
-            className={`py-1.5 px-2 rounded-lg transition-all text-center cursor-pointer ${
+            className={`py-2 px-2 rounded-lg transition-all text-center flex items-center justify-center gap-1.5 cursor-pointer ${
               activeSite === 'site1'
-                ? 'bg-white text-black font-bold shadow-sm'
-                : 'text-zinc-400 hover:text-white'
+                ? 'bg-white text-black font-bold shadow-md'
+                : 'text-zinc-400 hover:text-white hover:bg-white/[0.04]'
             }`}
           >
-            Site 1
+            <Database className="w-3 h-3" />
+            <span>Site 1</span>
           </button>
           <button
+            type="button"
             onClick={() => onSwitchSite('site2')}
-            className={`py-1.5 px-2 rounded-lg transition-all text-center flex items-center justify-center gap-1 cursor-pointer ${
+            className={`py-2 px-2 rounded-lg transition-all text-center flex items-center justify-center gap-1.5 cursor-pointer ${
               activeSite === 'site2'
-                ? 'bg-white text-black font-bold shadow-sm'
-                : 'text-zinc-400 hover:text-white'
+                ? 'bg-white text-black font-bold shadow-md'
+                : 'text-zinc-400 hover:text-white hover:bg-white/[0.04]'
             }`}
           >
             <Brain className="w-3 h-3" />
@@ -236,44 +238,6 @@ export default function Sidebar({
             </button>
           );
         })}
-
-        {/* Dynamic cross-site promotion pill */}
-        <div className="sidebar-divider my-4" />
-        <div className="sidebar-section-label mb-2">
-          {activeSite === 'site1' ? 'Machine Learning' : 'Ground Truth'}
-        </div>
-
-        {activeSite === 'site1' ? (
-          <button
-            onClick={() => onSwitchSite('site2')}
-            className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium text-zinc-300 hover:text-white transition-all duration-200 group relative overflow-hidden cursor-pointer"
-            style={{ 
-              background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 100%)',
-              border: '1px solid rgba(255,255,255,0.09)',
-            }}
-          >
-            <div className="flex items-center gap-2.5">
-              <Brain className="w-3.5 h-3.5 text-white group-hover:scale-110 transition-transform" />
-              <span className="text-[12px] font-semibold text-white">Switch to Site 2 ML</span>
-            </div>
-            <ArrowRight className="w-3 h-3 text-zinc-500 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
-          </button>
-        ) : (
-          <button
-            onClick={() => onSwitchSite('site1')}
-            className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium text-zinc-300 hover:text-white transition-all duration-200 group relative overflow-hidden cursor-pointer"
-            style={{ 
-              background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 100%)',
-              border: '1px solid rgba(255,255,255,0.09)',
-            }}
-          >
-            <div className="flex items-center gap-2.5">
-              <Database className="w-3.5 h-3.5 text-white group-hover:scale-110 transition-transform" />
-              <span className="text-[12px] font-semibold text-white">Return to Site 1 Studio</span>
-            </div>
-            <ArrowRight className="w-3 h-3 text-zinc-500 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
-          </button>
-        )}
       </div>
 
       {/* Bottom: Tour & Status */}

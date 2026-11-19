@@ -2,15 +2,31 @@ import React, { useState, useMemo } from 'react';
 import { TrendingUp, Layers, Sliders, CheckCircle2, Info } from 'lucide-react';
 import GlassCard from '../common/GlassCard';
 import Badge from '../common/Badge';
+import CustomSelect from '../common/CustomSelect';
 import { algorithmCurves, hardwareTargets } from '../../data/mlPredictorData';
 
 export default function ScalingCurvePlot() {
   const [selectedAlgoId, setSelectedAlgoId] = useState('ALG-001');
   const [selectedHardwareId, setSelectedHardwareId] = useState('esp32');
   const [isLogLog, setIsLogLog] = useState(true);
+  const [hoveredPoint, setHoveredPoint] = useState(null);
 
   const algo = algorithmCurves[selectedAlgoId] || algorithmCurves['ALG-001'];
   const hw = hardwareTargets.find(h => h.id === selectedHardwareId) || hardwareTargets[1];
+
+  const algoOptions = Object.entries(algorithmCurves).map(([id, a]) => ({
+    value: id,
+    label: a.name,
+    sub: a.theoretical,
+    tag: a.theoretical
+  }));
+
+  const hardwareOptions = hardwareTargets.map(h => ({
+    value: h.id,
+    label: h.name,
+    sub: `${h.clockMhz}MHz`,
+    tag: h.ramDisplay
+  }));
 
   // Generate 25 points along the scaling curve for SVG rendering
   const curvePoints = useMemo(() => {
@@ -21,7 +37,6 @@ export default function ScalingCurvePlot() {
     const archFactor = hw.category === 'Desktop/Edge AI' ? 0.35 : hw.category === 'SBC' ? 0.6 : 1.0;
 
     for (let i = 0; i <= 24; i++) {
-      // Logarithmic distribution of N
       const logMin = Math.log10(minN);
       const logMax = Math.log10(maxN);
       const logN = logMin + (i / 24) * (logMax - logMin);
@@ -37,7 +52,7 @@ export default function ScalingCurvePlot() {
     return points;
   }, [algo, hw]);
 
-  // Compute SVG plotting coordinates (ViewBox 600 x 300)
+  // Compute SVG plotting coordinates (ViewBox 560 x 240)
   const W = 560;
   const H = 240;
   const padL = 60;
@@ -48,7 +63,6 @@ export default function ScalingCurvePlot() {
   const chartW = W - padL - padR;
   const chartH = H - padT - padB;
 
-  // Scale ranges
   const minN = 50;
   const maxN = 50000;
   const maxLatency = curvePoints[curvePoints.length - 1].upper;
@@ -76,7 +90,7 @@ export default function ScalingCurvePlot() {
   // Prediction line points
   const predPolyline = curvePoints.map(p => `${getX(p.n)},${getY(p.pred)}`).join(' ');
 
-  // Confidence ribbon polygon (upper points forwards, lower points backwards)
+  // Confidence ribbon polygon
   const ribbonUpper = curvePoints.map(p => `${getX(p.n)},${getY(p.upper)}`);
   const ribbonLower = [...curvePoints].reverse().map(p => `${getX(p.n)},${getY(p.lower)}`);
   const ribbonPolygon = [...ribbonUpper, ...ribbonLower].join(' ');
@@ -120,37 +134,29 @@ export default function ScalingCurvePlot() {
 
       {/* Main Curve Card */}
       <GlassCard>
-        {/* Controls row */}
+        {/* Controls row with Custom Selects */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-white/[0.06]">
           <div className="flex flex-wrap items-center gap-4">
-            <div>
-              <label className="text-[10px] font-mono text-zinc-500 uppercase block mb-1">Target Algorithm</label>
-              <select
+            <div className="w-64">
+              <CustomSelect
+                label="Target Algorithm"
                 value={selectedAlgoId}
-                onChange={(e) => setSelectedAlgoId(e.target.value)}
-                className="px-3 py-1.5 text-xs rounded-xl glass-input cursor-pointer bg-[#0f0f12]"
-              >
-                {Object.entries(algorithmCurves).map(([id, a]) => (
-                  <option key={id} value={id}>{a.name} ({a.theoretical})</option>
-                ))}
-              </select>
+                onChange={setSelectedAlgoId}
+                options={algoOptions}
+              />
             </div>
 
-            <div>
-              <label className="text-[10px] font-mono text-zinc-500 uppercase block mb-1">Hardware Target</label>
-              <select
+            <div className="w-60">
+              <CustomSelect
+                label="Hardware Target"
                 value={selectedHardwareId}
-                onChange={(e) => setSelectedHardwareId(e.target.value)}
-                className="px-3 py-1.5 text-xs rounded-xl glass-input cursor-pointer bg-[#0f0f12]"
-              >
-                {hardwareTargets.map((h) => (
-                  <option key={h.id} value={h.id}>{h.name} ({h.clockMhz}MHz)</option>
-                ))}
-              </select>
+                onChange={setSelectedHardwareId}
+                options={hardwareOptions}
+              />
             </div>
           </div>
 
-          <div className="flex items-center gap-4 text-xs font-mono">
+          <div className="flex items-center gap-4 text-xs font-mono self-end md:self-center">
             <div className="flex items-center gap-2">
               <span className="w-3 h-0.5 bg-white inline-block" />
               <span className="text-zinc-300">M1 Regression</span>
@@ -166,7 +172,7 @@ export default function ScalingCurvePlot() {
           </div>
         </div>
 
-        {/* SVG Plot */}
+        {/* SVG Plot with interactive hover crosshairs */}
         <div className="relative w-full overflow-x-auto">
           <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-80 min-w-[500px]">
             {/* Grid lines */}
@@ -204,20 +210,62 @@ export default function ScalingCurvePlot() {
               strokeLinejoin="round"
             />
 
-            {/* Empirical Ground Truth Points from Site 1 */}
+            {/* Hover Crosshair Guide */}
+            {hoveredPoint && (
+              <g>
+                <line
+                  x1={hoveredPoint.cx}
+                  y1={padT}
+                  x2={hoveredPoint.cx}
+                  y2={padT + chartH}
+                  stroke="rgba(255,255,255,0.3)"
+                  strokeDasharray="2 2"
+                />
+                <line
+                  x1={padL}
+                  y1={hoveredPoint.cy}
+                  x2={padL + chartW}
+                  y2={hoveredPoint.cy}
+                  stroke="rgba(255,255,255,0.3)"
+                  strokeDasharray="2 2"
+                />
+              </g>
+            )}
+
+            {/* Empirical Ground Truth Points */}
             {algo.empiricalPoints.map((pt, idx) => {
               const cx = getX(pt.n);
               const cy = getY(pt.measuredMs);
+              const clockFactor = 240 / hw.clockMhz;
+              const archFactor = hw.category === 'Desktop/Edge AI' ? 0.35 : hw.category === 'SBC' ? 0.6 : 1.0;
+              const predVal = algo.constant * Math.pow(pt.n, algo.baseSlope) * clockFactor * archFactor;
+              const residual = Math.abs(pt.measuredMs - predVal);
+
+              const isHovered = hoveredPoint?.idx === idx;
+
               return (
-                <g key={idx} className="group cursor-pointer">
+                <g 
+                  key={idx} 
+                  className="cursor-pointer"
+                  onMouseEnter={() => setHoveredPoint({ 
+                    idx, 
+                    cx, 
+                    cy, 
+                    n: pt.n, 
+                    measured: pt.measuredMs, 
+                    pred: predVal, 
+                    residual 
+                  })}
+                  onMouseLeave={() => setHoveredPoint(null)}
+                >
                   <circle
                     cx={cx}
                     cy={cy}
-                    r="4.5"
-                    fill="#060608"
+                    r={isHovered ? 7 : 4.5}
+                    fill={isHovered ? '#ffffff' : '#060608'}
                     stroke="#ffffff"
-                    strokeWidth="2"
-                    className="transition-transform group-hover:scale-125"
+                    strokeWidth={isHovered ? 3 : 2}
+                    className="transition-all duration-150"
                   />
                 </g>
               );
@@ -241,6 +289,34 @@ export default function ScalingCurvePlot() {
               N = 50,000
             </text>
           </svg>
+
+          {/* Floating Hover Card */}
+          {hoveredPoint && (
+            <div 
+              className="absolute z-20 pointer-events-none p-3 rounded-xl bg-black/95 border border-white/20 text-xs font-mono shadow-2xl space-y-1"
+              style={{
+                left: `${Math.min(70, (hoveredPoint.cx / W) * 100)}%`,
+                top: '20px'
+              }}
+            >
+              <div className="text-white font-bold pb-1 border-b border-white/10 flex justify-between gap-4">
+                <span>Observation (N = {hoveredPoint.n.toLocaleString()})</span>
+                <span className="text-emerald-400">physical_board</span>
+              </div>
+              <div className="flex justify-between gap-4 text-zinc-400">
+                <span>Site 1 Measured:</span>
+                <span className="text-white font-bold">{hoveredPoint.measured.toFixed(2)} ms</span>
+              </div>
+              <div className="flex justify-between gap-4 text-zinc-400">
+                <span>M1 Predicted:</span>
+                <span className="text-zinc-200">{hoveredPoint.pred.toFixed(2)} ms</span>
+              </div>
+              <div className="flex justify-between gap-4 text-zinc-400">
+                <span>Residual Δ:</span>
+                <span className="text-zinc-300 font-bold">{hoveredPoint.residual.toFixed(3)} ms</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Analytical Findings Footnote */}
@@ -248,7 +324,7 @@ export default function ScalingCurvePlot() {
           <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.05]">
             <span className="text-zinc-500 text-[10px] uppercase block">Learned Empirical Slope (α)</span>
             <div className="text-base font-bold text-white mt-1">α = {algo.baseSlope}</div>
-            <span className="text-[10px] text-zinc-500">Theoretical: {algo.theoretical}</span>
+            <span className="text-[10px] text-zinc-500">Theoretical Asymptote: {algo.theoretical}</span>
           </div>
 
           <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.05]">
@@ -258,9 +334,9 @@ export default function ScalingCurvePlot() {
           </div>
 
           <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-            <span className="text-zinc-500 text-[10px] uppercase block">Hardware Penalty Factor</span>
+            <span className="text-zinc-500 text-[10px] uppercase block">Hardware Scaling Ratio</span>
             <div className="text-base font-bold text-white mt-1">{(240 / hw.clockMhz).toFixed(2)}× vs ESP32</div>
-            <span className="text-[10px] text-zinc-500">Clock: {hw.clockMhz} MHz</span>
+            <span className="text-[10px] text-zinc-500">Clock: {hw.clockMhz} MHz · {hw.ramDisplay}</span>
           </div>
         </div>
       </GlassCard>
