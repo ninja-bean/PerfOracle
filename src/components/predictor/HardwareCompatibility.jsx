@@ -29,7 +29,6 @@ export default function HardwareCompatibility() {
   const algoOptions = Object.entries(algorithmCurves).map(([id, a]) => ({
     value: id,
     label: a.name,
-    sub: a.theoretical,
     tag: a.theoretical
   }));
 
@@ -90,7 +89,7 @@ export default function HardwareCompatibility() {
       </GlassCard>
 
       {/* Target Matrix Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div data-tour="hardware-guardrails-grid" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {hardwareTargets.map((hw) => {
           const utilPct = (totalMemoryBytes / hw.ramBytes) * 100;
           const fits = totalMemoryBytes <= hw.ramBytes;

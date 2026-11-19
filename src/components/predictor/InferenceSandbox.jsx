@@ -55,7 +55,6 @@ export default function InferenceSandbox({ onOpenReportCard }) {
   const algoOptions = Object.entries(algorithmCurves).map(([id, a]) => ({
     value: id,
     label: a.name,
-    sub: a.theoretical,
     tag: a.theoretical
   }));
 
@@ -111,7 +110,7 @@ export default function InferenceSandbox({ onOpenReportCard }) {
         
         {/* Left Column: Parameter Configuration Deck (5 cols) */}
         <div className="lg:col-span-5 space-y-6">
-          <GlassCard>
+          <GlassCard data-tour="sandbox-workload-controls">
             <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/[0.08]">
               <span className="text-xs font-mono uppercase tracking-wider text-zinc-400 font-bold flex items-center gap-2">
                 <Sliders className="w-3.5 h-3.5 text-white" />
@@ -183,7 +182,7 @@ export default function InferenceSandbox({ onOpenReportCard }) {
               </div>
 
               {/* Logarithmic Slider for N */}
-              <div className="pt-3 border-t border-white/[0.06]">
+              <div data-tour="sandbox-log-slider" className="pt-3 border-t border-white/[0.06]">
                 <LogSlider
                   value={inputN}
                   onChange={setInputN}

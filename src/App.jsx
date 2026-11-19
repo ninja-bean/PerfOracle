@@ -13,6 +13,7 @@ import DatasetTable from './components/dataset/DatasetTable';
 import CsvRawModal from './components/dataset/CsvRawModal';
 import Phase2TeaserModal from './components/ml/Phase2TeaserModal';
 import TutorialTour from './components/tutorial/TutorialTour';
+import Site2Tour from './components/tutorial/Site2Tour';
 
 // Site 2 Components (Predictive Machine Learning Platform)
 import PredictorOverview from './components/predictor/PredictorOverview';
@@ -257,15 +258,24 @@ export default function App() {
         </footer>
       </div>
 
-      {/* Global Modals */}
-      <TutorialTour
-        isOpen={isTutorialOpen}
-        onClose={() => setIsTutorialOpen(false)}
-        onNavigate={(tab) => {
-          setActiveSite('site1');
-          setSite1ActiveTab(tab);
-        }}
-      />
+      {/* Global Modals & Contextual Tours */}
+      {activeSite === 'site2' ? (
+        <Site2Tour
+          isOpen={isTutorialOpen}
+          onClose={() => setIsTutorialOpen(false)}
+          activeTab={site2ActiveTab}
+          onNavigateTab={setSite2ActiveTab}
+        />
+      ) : (
+        <TutorialTour
+          isOpen={isTutorialOpen}
+          onClose={() => setIsTutorialOpen(false)}
+          onNavigate={(tab) => {
+            setActiveSite('site1');
+            setSite1ActiveTab(tab);
+          }}
+        />
+      )}
 
       <AddAlgoModal
         isOpen={isAddModalOpen}

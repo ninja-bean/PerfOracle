@@ -1,8 +1,17 @@
 import React from 'react';
-import { Menu, Sparkles, Database, HelpCircle, Sliders, ChevronRight, Brain, Zap } from 'lucide-react';
+import { 
+  Menu, 
+  Sparkles, 
+  Database, 
+  HelpCircle, 
+  Sliders, 
+  ChevronRight, 
+  Brain, 
+  Zap 
+} from 'lucide-react';
 
 export default function Header({ 
-  activeSite = 'site1',
+  activeSite = 'site2',
   onSwitchSite,
   activeTab, 
   site2ActiveTab,
@@ -12,19 +21,19 @@ export default function Header({
   onNavigate 
 }) {
   const site1Titles = {
-    overview:   { title: 'Overview',              crumb: 'Dashboard' },
-    algorithms: { title: 'Algorithm Registry',    crumb: 'Registry' },
+    overview:   { title: 'Overview',              crumb: 'Telemetry' },
+    algorithms: { title: 'Algorithm Registry',    crumb: 'Asymptotics' },
     tiers:      { title: 'Tier Matrix',           crumb: 'Classification' },
-    rubrics:    { title: 'Rubric Benchmarks',     crumb: 'Testing' },
-    dataset:    { title: 'Dataset & CSV Studio',  crumb: 'Export' }
+    rubrics:    { title: 'Rubric Benchmarks',     crumb: 'Live Runner' },
+    dataset:    { title: 'Dataset & CSV Studio',  crumb: 'RFC 4180' }
   };
 
   const site2Titles = {
     overview: { title: 'Predictor Overview',      crumb: 'Neural Engine' },
-    sandbox:  { title: 'Inference Sandbox',       crumb: 'Simulation' },
-    scaling:  { title: 'Scaling & Log-Log Plot',  crumb: 'Asymptotics' },
-    hardware: { title: 'Hardware Guardrails',     crumb: 'Constraints' },
-    models:   { title: 'Model Leaderboard',       crumb: 'Validation' }
+    sandbox:  { title: 'Inference Sandbox',       crumb: 'Workload Simulation' },
+    scaling:  { title: 'Scaling & Log-Log Plot',  crumb: 'Asymptotic Regression' },
+    hardware: { title: 'Hardware Guardrails',     crumb: 'Memory Walls' },
+    models:   { title: 'Model Leaderboard',       crumb: 'Parity Calibration' }
   };
 
   const current = activeSite === 'site2' 
@@ -32,68 +41,57 @@ export default function Header({
     : (site1Titles[activeTab] || site1Titles.overview);
 
   return (
-    <header className="sticky top-0 z-30 w-full" style={{
-      background: 'rgba(6,6,8,0.88)',
-      borderBottom: '1px solid rgba(255,255,255,0.07)',
-      backdropFilter: 'blur(20px)',
-      WebkitBackdropFilter: 'blur(20px)',
-    }}>
-      <div className="px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+    <header className="sticky top-0 z-30 w-full glass-surface-l1 border-b">
+      <div className="px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-4">
         
-        {/* Left: Hamburger (mobile) + Breadcrumb */}
+        {/* Left: Mobile Trigger + Breadcrumb */}
         <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={onToggleSidebar}
-            className="lg:hidden p-2 rounded-xl transition-colors text-zinc-500 hover:text-white hover:bg-white/[0.06] cursor-pointer"
+            className="lg:hidden p-2 rounded-xl transition-colors text-zinc-400 hover:text-white hover:bg-white/[0.06] cursor-pointer"
             aria-label="Open sidebar"
           >
-            <Menu className="w-4.5 h-4.5" />
+            <Menu className="w-4 h-4" />
           </button>
 
-          {/* Mobile logo */}
-          <div className="lg:hidden shrink-0">
-            <img 
-              src="/perforacle_icon_square.png" 
-              alt="Logo" 
-              className="w-6 h-6 object-contain logo-glow" 
-            />
-          </div>
-
-          {/* Breadcrumb-style title */}
-          <div className="flex items-center gap-1.5 min-w-0">
-            <span className="text-[11px] text-zinc-600 font-mono hidden sm:inline">
+          {/* Breadcrumb Navigation */}
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 min-w-0 text-xs">
+            <span className="text-zinc-500 font-mono hidden sm:inline font-medium">
               PerfOracle
             </span>
-            <ChevronRight className="w-3 h-3 text-zinc-700 hidden sm:inline shrink-0" />
-            <span className="text-[11px] text-zinc-500 font-mono hidden md:inline">
+            <ChevronRight className="w-3 h-3 text-zinc-600 hidden sm:inline shrink-0" />
+            <span className="text-zinc-400 font-mono hidden md:inline">
               {activeSite === 'site2' ? 'Site 2: Predictor' : 'Site 1: Benchmarks'}
             </span>
-            <ChevronRight className="w-3 h-3 text-zinc-700 hidden md:inline shrink-0" />
-            <h2 className="text-[13px] font-semibold text-zinc-200 tracking-tight truncate">
-              {current.title}
-            </h2>
-          </div>
+            <ChevronRight className="w-3 h-3 text-zinc-600 hidden md:inline shrink-0" />
+            <div className="flex items-center gap-2 truncate">
+              <h2 className="font-semibold text-white tracking-tight truncate text-[13px]">
+                {current.title}
+              </h2>
+              <span className="hidden xl:inline text-[10px] font-mono text-zinc-500 bg-white/[0.04] px-1.5 py-0.5 rounded border border-white/[0.06]">
+                {current.crumb}
+              </span>
+            </div>
+          </nav>
         </div>
 
-        {/* Right: Controls */}
-        <div className="flex items-center gap-2 shrink-0">
-          {/* Tour */}
+        {/* Right: Site Switcher, Tour & Action CTA */}
+        <div className="flex items-center gap-2.5 shrink-0">
+          {/* Interactive Tour Button */}
           <button
             onClick={onOpenTutorial}
-            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg transition-all text-zinc-500 hover:text-white hover:bg-white/[0.06] border border-transparent hover:border-white/[0.08] text-[11px] font-medium cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all text-zinc-400 hover:text-white hover:bg-white/[0.06] border border-white/[0.07] hover:border-white/[0.15] text-xs font-medium cursor-pointer"
+            title="Launch interactive walkthrough"
           >
-            <HelpCircle className="w-3.5 h-3.5" />
-            <span>Tour</span>
+            <HelpCircle className="w-3.5 h-3.5 text-zinc-400" />
+            <span className="hidden sm:inline">Tour</span>
           </button>
 
-          {/* Dual-Site Switcher Pill */}
-          <div className="flex items-center rounded-lg p-0.5" style={{
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.08)',
-          }}>
+          {/* Dual-Site Switcher Segment */}
+          <div className="flex items-center rounded-xl p-0.5 bg-white/[0.035] border border-white/[0.08]">
             <button
               onClick={() => onSwitchSite('site1')}
-              className={`px-3 py-1 text-[11px] rounded-md font-semibold transition-all cursor-pointer ${
+              className={`px-3 py-1 text-xs rounded-lg font-semibold transition-all cursor-pointer ${
                 activeSite === 'site1'
                   ? 'bg-white text-black font-bold shadow-sm'
                   : 'text-zinc-400 hover:text-white'
@@ -103,7 +101,7 @@ export default function Header({
             </button>
             <button
               onClick={() => onSwitchSite('site2')}
-              className={`px-3 py-1 text-[11px] rounded-md font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-3 py-1 text-xs rounded-lg font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                 activeSite === 'site2'
                   ? 'bg-white text-black font-bold shadow-sm'
                   : 'text-zinc-400 hover:text-white'
@@ -114,46 +112,31 @@ export default function Header({
             </button>
           </div>
 
-          {/* Context CTA */}
+          {/* Context Action CTA */}
           {activeSite === 'site1' ? (
             activeTab !== 'dataset' ? (
               <button
                 onClick={() => onNavigate('dataset')}
-                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold text-[11px] uppercase tracking-wide transition-all hover:scale-[1.03] active:scale-95 cursor-pointer"
-                style={{
-                  background: '#fff',
-                  color: '#000',
-                  boxShadow: '0 0 18px rgba(255,255,255,0.18)',
-                }}
+                className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.02] active:scale-95 cursor-pointer hero-primary-btn"
               >
-                <Database className="w-3 h-3" />
+                <Database className="w-3.5 h-3.5" />
                 <span>Export CSV</span>
               </button>
             ) : (
               <button
                 onClick={() => onNavigate('rubrics')}
-                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold text-[11px] uppercase tracking-wide transition-all hover:scale-[1.03] active:scale-95 cursor-pointer"
-                style={{
-                  background: '#fff',
-                  color: '#000',
-                  boxShadow: '0 0 18px rgba(255,255,255,0.18)',
-                }}
+                className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.02] active:scale-95 cursor-pointer hero-primary-btn"
               >
-                <Sliders className="w-3 h-3" />
-                <span>New Bench</span>
+                <Sliders className="w-3.5 h-3.5" />
+                <span>New Benchmark</span>
               </button>
             )
           ) : (
             <button
               onClick={() => onNavigate('sandbox')}
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold text-[11px] uppercase tracking-wide transition-all hover:scale-[1.03] active:scale-95 cursor-pointer"
-              style={{
-                background: '#fff',
-                color: '#000',
-                boxShadow: '0 0 18px rgba(255,255,255,0.18)',
-              }}
+              className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.02] active:scale-95 cursor-pointer hero-primary-btn"
             >
-              <Zap className="w-3 h-3" />
+              <Zap className="w-3.5 h-3.5" />
               <span>Run Inference</span>
             </button>
           )}

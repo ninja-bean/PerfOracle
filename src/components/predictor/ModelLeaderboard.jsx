@@ -197,7 +197,7 @@ export default function ModelLeaderboard() {
         </div>
 
         {/* Right Column: 45-Degree Parity Scatter Plot */}
-        <div className="lg:col-span-5 space-y-6">
+        <div data-tour="model-parity-plot" className="lg:col-span-5 space-y-6">
           <GlassCard>
             <div className="flex items-center justify-between mb-3 pb-3 border-b border-white/[0.06]">
               <div>

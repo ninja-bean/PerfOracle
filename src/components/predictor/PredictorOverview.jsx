@@ -86,7 +86,7 @@ export default function PredictorOverview({ onNavigate, onOpenSandbox }) {
             {/* Right: Live Predictor Telemetry Summary */}
             <div className="lg:w-80 shrink-0 space-y-3">
               {/* Primary Model Score Card */}
-              <div className="rounded-2xl p-4 overview-subcard">
+              <div data-tour="site2-hero-metrics" className="rounded-2xl p-4 overview-subcard">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <Brain className="w-3.5 h-3.5 text-white" />

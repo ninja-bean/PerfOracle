@@ -17,7 +17,6 @@ export default function ScalingCurvePlot() {
   const algoOptions = Object.entries(algorithmCurves).map(([id, a]) => ({
     value: id,
     label: a.name,
-    sub: a.theoretical,
     tag: a.theoretical
   }));
 
