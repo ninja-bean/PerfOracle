@@ -4,7 +4,7 @@ export default function GlassCard({ children, className = '', hover = false, onC
   return (
     <div
       onClick={onClick}
-      className={`glass-card-human rounded-2xl p-5 relative overflow-hidden ${
+      className={`glass-card-human rounded-2xl p-5 text-white relative overflow-hidden ${
         hover ? 'card-hover-lift cursor-pointer' : ''
       } ${className}`}
       {...props}

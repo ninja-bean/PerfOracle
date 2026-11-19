@@ -35,19 +35,11 @@ export default function App() {
   const [rawCsvText, setRawCsvText] = useState(null);
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
 
-  // Theme Management: 'dark' | 'light', persisted in localStorage
-  const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('perforacle_theme') || 'dark';
-  });
-
+  // Clear any light theme setting from document
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('perforacle_theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
-  };
+    document.documentElement.removeAttribute('data-theme');
+    localStorage.removeItem('perforacle_theme');
+  }, []);
 
   // Automatically trigger tutorial on first visit
   useEffect(() => {
@@ -92,11 +84,7 @@ export default function App() {
   const nextAlgoId = `ALG-${String(algorithms.length + 1).padStart(3, '0')}`;
 
   return (
-    <div className={`min-h-screen flex relative transition-colors duration-200 ${
-      theme === 'light'
-        ? 'bg-[#f6f7f9] text-[#09090b] selection:bg-black selection:text-white'
-        : 'bg-[#060608] text-white selection:bg-white selection:text-black'
-    }`}>
+    <div className="min-h-screen bg-[#060608] text-white flex selection:bg-white selection:text-black relative">
       {/* Background Precision Grid */}
       <div className="fixed inset-0 bg-grid-subtle opacity-60 pointer-events-none -z-20" />
 
@@ -110,8 +98,6 @@ export default function App() {
         benchmarkCount={benchmarks.length}
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
-        theme={theme}
-        toggleTheme={toggleTheme}
       />
 
       {/* Main Content Area — Naturally fills space adjacent to sidebar without any overlap */}
@@ -122,8 +108,6 @@ export default function App() {
           onOpenPhase2={() => setIsPhase2ModalOpen(true)}
           onOpenTutorial={() => setIsTutorialOpen(true)}
           onNavigate={setActiveTab}
-          theme={theme}
-          toggleTheme={toggleTheme}
         />
 
         <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -180,29 +164,25 @@ export default function App() {
         </main>
 
         {/* Minimalist Human Footer */}
-        <footer className={`border-t py-6 px-4 text-xs font-mono transition-colors duration-200 ${
-          theme === 'light'
-            ? 'border-black/[0.08] bg-[#f0f2f5] text-zinc-600'
-            : 'border-white/[0.08] bg-[#050507] text-zinc-500'
-        }`}>
+        <footer className="border-t border-white/[0.08] bg-[#050507] py-6 px-4 text-xs text-zinc-500 font-mono">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <span className={`font-bold font-sans ${theme === 'light' ? 'text-zinc-900' : 'text-zinc-300'}`}>PerfOracle</span>
+              <span className="font-bold text-zinc-300 font-sans">PerfOracle</span>
               <span>• Final Year Design Project</span>
-              <span className={`hidden sm:inline ${theme === 'light' ? 'text-zinc-400' : 'text-zinc-600'}`}>|</span>
+              <span className="hidden sm:inline text-zinc-600">|</span>
               <span className="hidden sm:inline">Empirical Benchmark Engine</span>
             </div>
-            <div className={`flex items-center gap-4 text-[11px] ${theme === 'light' ? 'text-zinc-600' : 'text-zinc-400'}`}>
+            <div className="flex items-center gap-4 text-[11px] text-zinc-400">
               <button 
                 onClick={() => setIsTutorialOpen(true)}
-                className={`transition-colors ${theme === 'light' ? 'hover:text-black' : 'hover:text-white'}`}
+                className="hover:text-white transition-colors"
               >
                 Replay Visual Tour
               </button>
               <span>•</span>
               <span>RFC 4180 Dataset Studio</span>
               <span>•</span>
-              <span className={theme === 'light' ? 'text-zinc-900 font-semibold' : 'text-zinc-200'}>Site 1 Production-Ready</span>
+              <span className="text-zinc-200">Site 1 Production-Ready</span>
             </div>
           </div>
         </footer>
