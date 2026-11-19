@@ -293,7 +293,17 @@ export const algorithmCurves = {
     baseSlope: 1.14,
     constant: 0.00042,
     memoryPerItemBytes: 8,
-    fixedMemoryBytes: 4096
+    fixedMemoryBytes: 4096,
+    empiricalPoints: [
+      { n: 100, measuredMs: 0.081 },
+      { n: 500, measuredMs: 0.512 },
+      { n: 1000, measuredMs: 1.145 },
+      { n: 2500, measuredMs: 3.24 },
+      { n: 5000, measuredMs: 7.15 },
+      { n: 10000, measuredMs: 15.82 },
+      { n: 25000, measuredMs: 44.9 },
+      { n: 50000, measuredMs: 98.4 }
+    ]
   },
   'ALG-003': {
     name: "Dijkstra's Shortest Path",
@@ -301,7 +311,15 @@ export const algorithmCurves = {
     baseSlope: 1.28,
     constant: 0.0011,
     memoryPerItemBytes: 48,
-    fixedMemoryBytes: 8192
+    fixedMemoryBytes: 8192,
+    empiricalPoints: [
+      { n: 100, measuredMs: 0.41 },
+      { n: 500, measuredMs: 3.21 },
+      { n: 1000, measuredMs: 7.78 },
+      { n: 2500, measuredMs: 25.1 },
+      { n: 5000, measuredMs: 61.2 },
+      { n: 10000, measuredMs: 148.5 }
+    ]
   },
   'ALG-004': {
     name: 'Strassen Matrix Multiplication',
@@ -309,7 +327,14 @@ export const algorithmCurves = {
     baseSlope: 2.76,
     constant: 0.000085,
     memoryPerItemBytes: 64,
-    fixedMemoryBytes: 16384
+    fixedMemoryBytes: 16384,
+    empiricalPoints: [
+      { n: 50, measuredMs: 4.1 },
+      { n: 100, measuredMs: 27.5 },
+      { n: 200, measuredMs: 186.0 },
+      { n: 300, measuredMs: 565.0 },
+      { n: 500, measuredMs: 2310.0 }
+    ]
   },
   'ALG-005': {
     name: 'AES-256 Block Cipher',
@@ -317,7 +342,16 @@ export const algorithmCurves = {
     baseSlope: 1.02,
     constant: 0.00088,
     memoryPerItemBytes: 16,
-    fixedMemoryBytes: 3072
+    fixedMemoryBytes: 3072,
+    empiricalPoints: [
+      { n: 100, measuredMs: 0.098 },
+      { n: 500, measuredMs: 0.505 },
+      { n: 1000, measuredMs: 1.02 },
+      { n: 5000, measuredMs: 5.24 },
+      { n: 10000, measuredMs: 10.65 },
+      { n: 25000, measuredMs: 27.1 },
+      { n: 50000, measuredMs: 55.4 }
+    ]
   },
   'ALG-006': {
     name: 'Cooley-Tukey Radix-2 FFT',
@@ -325,7 +359,15 @@ export const algorithmCurves = {
     baseSlope: 1.16,
     constant: 0.00065,
     memoryPerItemBytes: 16,
-    fixedMemoryBytes: 4096
+    fixedMemoryBytes: 4096,
+    empiricalPoints: [
+      { n: 128, measuredMs: 0.18 },
+      { n: 512, measuredMs: 0.89 },
+      { n: 1024, measuredMs: 1.99 },
+      { n: 4096, measuredMs: 9.85 },
+      { n: 16384, measuredMs: 48.9 },
+      { n: 32768, measuredMs: 108.2 }
+    ]
   }
 };
 

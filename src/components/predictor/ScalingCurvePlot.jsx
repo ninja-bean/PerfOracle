@@ -232,13 +232,14 @@ export default function ScalingCurvePlot() {
             )}
 
             {/* Empirical Ground Truth Points */}
-            {algo.empiricalPoints.map((pt, idx) => {
-              const cx = getX(pt.n);
-              const cy = getY(pt.measuredMs);
+            {(algo.empiricalPoints || []).map((pt, idx) => {
               const clockFactor = 240 / hw.clockMhz;
               const archFactor = hw.category === 'Desktop/Edge AI' ? 0.35 : hw.category === 'SBC' ? 0.6 : 1.0;
+              const measured = pt.measuredMs * clockFactor * archFactor;
+              const cx = getX(pt.n);
+              const cy = getY(measured);
               const predVal = algo.constant * Math.pow(pt.n, algo.baseSlope) * clockFactor * archFactor;
-              const residual = Math.abs(pt.measuredMs - predVal);
+              const residual = Math.abs(measured - predVal);
 
               const isHovered = hoveredPoint?.idx === idx;
 
@@ -251,7 +252,7 @@ export default function ScalingCurvePlot() {
                     cx, 
                     cy, 
                     n: pt.n, 
-                    measured: pt.measuredMs, 
+                    measured, 
                     pred: predVal, 
                     residual 
                   })}
