@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Modal from '../common/Modal';
 import Badge from '../common/Badge';
+import CustomSelect from '../common/CustomSelect';
 
 export default function AddAlgoModal({ isOpen, onClose, onAddAlgorithm, categories, nextId }) {
   const [formData, setFormData] = useState({
@@ -138,20 +139,15 @@ export default function AddAlgoModal({ isOpen, onClose, onAddAlgorithm, categori
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">
-                Algorithmic Category
-              </label>
-              <select
+              <CustomSelect
+                label="Algorithmic Category"
                 value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                className="w-full px-3.5 py-2 rounded-xl glass-input text-xs bg-[#111111]"
-              >
-                {categories.filter(c => c !== 'All').map((cat) => (
-                  <option key={cat} value={cat} className="bg-[#111111] text-white">
-                    {cat}
-                  </option>
-                ))}
-              </select>
+                onChange={(val) => setFormData({ ...formData, category: val })}
+                options={categories.filter(c => c !== 'All').map((cat) => ({
+                  value: cat,
+                  label: cat
+                }))}
+              />
             </div>
 
             <div>
@@ -174,37 +170,27 @@ export default function AddAlgoModal({ isOpen, onClose, onAddAlgorithm, categori
           <div className="space-y-4 animate-in fade-in duration-150">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">
-                  Time Complexity
-                </label>
-                <select
+                <CustomSelect
+                  label="Time Complexity"
                   value={formData.timeComplexity}
-                  onChange={(e) => setFormData({ ...formData, timeComplexity: e.target.value })}
-                  className="w-full px-3.5 py-2 rounded-xl glass-input text-xs bg-[#111111]"
-                >
-                  {timeOptions.map((opt) => (
-                    <option key={opt} value={opt} className="bg-[#111111] text-white">
-                      {opt}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(val) => setFormData({ ...formData, timeComplexity: val })}
+                  options={timeOptions.map((opt) => ({
+                    value: opt,
+                    label: opt
+                  }))}
+                />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">
-                  Space Complexity
-                </label>
-                <select
+                <CustomSelect
+                  label="Space Complexity"
                   value={formData.spaceComplexity}
-                  onChange={(e) => setFormData({ ...formData, spaceComplexity: e.target.value })}
-                  className="w-full px-3.5 py-2 rounded-xl glass-input text-xs bg-[#111111]"
-                >
-                  {spaceOptions.map((opt) => (
-                    <option key={opt} value={opt} className="bg-[#111111] text-white">
-                      {opt}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(val) => setFormData({ ...formData, spaceComplexity: val })}
+                  options={spaceOptions.map((opt) => ({
+                    value: opt,
+                    label: opt
+                  }))}
+                />
               </div>
             </div>
 
@@ -238,20 +224,18 @@ export default function AddAlgoModal({ isOpen, onClose, onAddAlgorithm, categori
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">
-                Baseline Target Tier
-              </label>
-              <select
+              <CustomSelect
+                label="Baseline Target Tier"
                 value={formData.defaultTier}
-                onChange={(e) => setFormData({ ...formData, defaultTier: e.target.value })}
-                className="w-full px-3.5 py-2 rounded-xl glass-input text-xs bg-[#111111]"
-              >
-                <option value="Tier S" className="bg-[#111111] text-white">Tier S - Elite Throughput (Latency &lt; 8ms)</option>
-                <option value="Tier A" className="bg-[#111111] text-white">Tier A - High Efficiency (Latency &lt; 35ms)</option>
-                <option value="Tier B" className="bg-[#111111] text-white">Tier B - Standard Operational (Latency &lt; 120ms)</option>
-                <option value="Tier C" className="bg-[#111111] text-white">Tier C - Heavy / Super-linear (Latency &lt; 450ms)</option>
-                <option value="Tier D" className="bg-[#111111] text-white">Tier D - Constrained Bottleneck (Latency &gt; 450ms)</option>
-              </select>
+                onChange={(val) => setFormData({ ...formData, defaultTier: val })}
+                options={[
+                  { value: "Tier S", label: "Tier S - Elite Throughput", badge: "< 8ms", meta: "Elite" },
+                  { value: "Tier A", label: "Tier A - High Efficiency", badge: "< 35ms", meta: "High" },
+                  { value: "Tier B", label: "Tier B - Standard Operational", badge: "< 120ms", meta: "Standard" },
+                  { value: "Tier C", label: "Tier C - Heavy / Super-linear", badge: "< 450ms", meta: "Heavy" },
+                  { value: "Tier D", label: "Tier D - Constrained Bottleneck", badge: "> 450ms", meta: "Bottleneck" }
+                ]}
+              />
             </div>
           </div>
         )}

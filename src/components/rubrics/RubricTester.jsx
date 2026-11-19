@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import GlassCard from '../common/GlassCard';
 import Badge from '../common/Badge';
+import CustomSelect from '../common/CustomSelect';
 import { calculateRubricScore, getTierFromScore } from '../../data/dummyData';
 
 export default function RubricTester({ 
@@ -138,7 +139,7 @@ export default function RubricTester({
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-300">
+    <div data-tour="site1-rubric-tester" className="space-y-8 animate-in fade-in duration-300">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -225,20 +226,17 @@ export default function RubricTester({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
-                  Target Algorithm
-                </label>
-                <select
+                <CustomSelect
+                  label="Target Algorithm"
                   value={algoId}
-                  onChange={(e) => setAlgoId(e.target.value)}
-                  className="w-full px-4 py-3 rounded-2xl glass-input text-xs font-medium"
-                >
-                  {algorithms.map((a) => (
-                    <option key={a.id} value={a.id}>
-                      {a.name} ({a.timeComplexity})
-                    </option>
-                  ))}
-                </select>
+                  onChange={(val) => setAlgoId(val)}
+                  options={algorithms.map((a) => ({
+                    value: a.id,
+                    label: a.name,
+                    badge: a.timeComplexity,
+                    meta: a.category
+                  }))}
+                />
               </div>
 
               <div>
@@ -265,21 +263,19 @@ export default function RubricTester({
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
-                Workload Distribution Profile
-              </label>
-              <select
+              <CustomSelect
+                label="Workload Distribution Profile"
                 value={workloadType}
-                onChange={(e) => setWorkloadType(e.target.value)}
-                className="w-full px-4 py-3 rounded-2xl glass-input text-xs font-medium"
-              >
-                <option value="Uniform Random Vector (Standard Case)">Uniform Random Vector (Standard Case)</option>
-                <option value="Partially Ordered 90%">Partially Ordered 90% (Adaptive Advantage)</option>
-                <option value="Worst Case Adversarial Inversion">Worst-Case Adversarial Inversion</option>
-                <option value="Sparse Graph Adjacency Vector (E = 3V)">Sparse Graph Adjacency Vector (E = 3V)</option>
-                <option value="Dense Complete Matrix Adjacency">Dense Complete Matrix Adjacency</option>
-                <option value="Duplicate Heavy Low Key Cardinality">Duplicate Heavy Low Key Cardinality</option>
-              </select>
+                onChange={(val) => setWorkloadType(val)}
+                options={[
+                  { value: "Uniform Random Vector (Standard Case)", label: "Uniform Random Vector (Standard Case)", badge: "O(n)", meta: "Standard" },
+                  { value: "Partially Ordered 90%", label: "Partially Ordered 90% (Adaptive Advantage)", badge: "Adaptive", meta: "Best-Case" },
+                  { value: "Worst Case Adversarial Inversion", label: "Worst-Case Adversarial Inversion", badge: "Adversarial", meta: "Worst-Case" },
+                  { value: "Sparse Graph Adjacency Vector (E = 3V)", label: "Sparse Graph Adjacency Vector (E = 3V)", badge: "Sparse", meta: "Graph" },
+                  { value: "Dense Complete Matrix Adjacency", label: "Dense Complete Matrix Adjacency", badge: "Dense", meta: "Matrix" },
+                  { value: "Duplicate Heavy Low Key Cardinality", label: "Duplicate Heavy Low Key Cardinality", badge: "Duplicates", meta: "Entropy" }
+                ]}
+              />
             </div>
           </GlassCard>
 

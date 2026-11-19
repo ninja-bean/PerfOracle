@@ -173,7 +173,9 @@ export default function OverviewView({
       {/* ═══════════════════════════════════════════════
           STAT COUNTERS
       ═══════════════════════════════════════════════ */}
-      <StatCounters algorithms={algorithms} benchmarks={benchmarks} tiers={tiers} />
+      <div data-tour="site1-hero-stats">
+        <StatCounters algorithms={algorithms} benchmarks={benchmarks} tiers={tiers} />
+      </div>
 
       {/* ═══════════════════════════════════════════════
           CONTENT AREA — Asymmetric cols

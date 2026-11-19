@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import GlassCard from '../common/GlassCard';
 import Badge from '../common/Badge';
+import CustomSelect from '../common/CustomSelect';
 import { generateCsvDataset } from '../../data/dummyData';
 
 export default function DatasetTable({ 
@@ -114,7 +115,7 @@ export default function DatasetTable({
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
+    <div data-tour="site1-dataset-studio" className="space-y-6 animate-in fade-in duration-300">
       {/* Top Controls Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -164,20 +165,19 @@ export default function DatasetTable({
 
           <div className="flex flex-wrap items-center gap-2">
             {/* Tier Filter */}
-            <div className="flex items-center gap-1.5 text-xs">
-              <span className="text-zinc-400 font-mono text-[11px]">Tier:</span>
-              <select
+            <div className="w-44">
+              <CustomSelect
                 value={selectedTier}
-                onChange={(e) => { setSelectedTier(e.target.value); setCurrentPage(1); }}
-                className="px-3 py-1.5 rounded-xl glass-input text-xs font-mono"
-              >
-                <option value="All">All Tiers ({benchmarks.length})</option>
-                <option value="Tier S">Tier S</option>
-                <option value="Tier A">Tier A</option>
-                <option value="Tier B">Tier B</option>
-                <option value="Tier C">Tier C</option>
-                <option value="Tier D">Tier D</option>
-              </select>
+                onChange={(val) => { setSelectedTier(val); setCurrentPage(1); }}
+                options={[
+                  { value: "All", label: "All Tiers", badge: `${benchmarks.length}` },
+                  { value: "Tier S", label: "Tier S", badge: "Elite" },
+                  { value: "Tier A", label: "Tier A", badge: "High" },
+                  { value: "Tier B", label: "Tier B", badge: "Standard" },
+                  { value: "Tier C", label: "Tier C", badge: "Heavy" },
+                  { value: "Tier D", label: "Tier D", badge: "Bottleneck" }
+                ]}
+              />
             </div>
 
             {/* Column Selector Toggle */}

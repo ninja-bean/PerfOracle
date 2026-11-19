@@ -105,10 +105,11 @@ export default function Site2Tour({
         return;
       }
 
-      // Smoothly scroll the highlighted section into center of viewport
+      // Smoothly scroll the highlighted section into center/start of viewport
+      const isTall = el.offsetHeight > window.innerHeight * 0.75;
       el.scrollIntoView({
         behavior: 'smooth',
-        block: 'center',
+        block: isTall ? 'start' : 'center',
         inline: 'nearest'
       });
 

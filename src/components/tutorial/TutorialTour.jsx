@@ -1,300 +1,413 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   X, 
   ArrowRight, 
   ArrowLeft, 
-  CheckCircle, 
+  Check, 
   Cpu, 
   Layers, 
   Sliders, 
   Database, 
   Sparkles,
-  HelpCircle
+  BarChart3,
+  Award
 } from 'lucide-react';
-import Badge from '../common/Badge';
 
-export default function TutorialTour({ isOpen, onClose, onNavigate }) {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [dontShowAgain, setDontShowAgain] = useState(false);
+export const SITE1_TOUR_STEPS = [
+  {
+    id: 'overview-telemetry',
+    tab: 'overview',
+    target: '[data-tour="site1-hero-stats"]',
+    icon: Sparkles,
+    badge: 'Telemetry Core',
+    title: 'Empirical Telemetry Hub',
+    body: 'PerfOracle captures real-world algorithm telemetry across calibrated rubrics. Track real-time metric aggregates, active computational paradigms, and pipeline throughput.',
+    actionLabel: 'Inspect Algorithm Registry'
+  },
+  {
+    id: 'algo-registry',
+    tab: 'algorithms',
+    target: '[data-tour="site1-algo-registry"]',
+    icon: Cpu,
+    badge: 'Asymptotics',
+    title: 'Asymptotic Algorithm Registry',
+    body: 'Explore computational algorithms cataloged with theoretical Big-O boundaries, memory invariants (in-place vs. auxiliary), and implementation pseudocode. Register custom algorithms directly into the system.',
+    actionLabel: 'View Tier Allocations'
+  },
+  {
+    id: 'tier-matrix',
+    tab: 'tiers',
+    target: '[data-tour="site1-tier-matrix"]',
+    icon: Layers,
+    badge: 'Classification',
+    title: 'Tier Allocation Matrix (Tier S → D)',
+    body: 'Stratify algorithms into discrete performance bands based on strict latency and memory ceilings. Use the Level 3 CustomSelect popovers to reassign tiers or tune mathematical boundary thresholds.',
+    actionLabel: 'Open Rubric Console'
+  },
+  {
+    id: 'rubric-tester',
+    tab: 'rubrics',
+    target: '[data-tour="site1-rubric-tester"]',
+    icon: Sliders,
+    badge: 'Live Runner',
+    title: 'Rubric Benchmarking Console',
+    body: 'Simulate multi-parameter execution workloads across varying input sizes (N=1,000 to 1,000,000). Weight criteria dynamically to calculate normalized 0–100 composite scores.',
+    actionLabel: 'Explore Dataset Studio'
+  },
+  {
+    id: 'dataset-studio',
+    tab: 'dataset',
+    target: '[data-tour="site1-dataset-studio"]',
+    icon: Database,
+    badge: 'ML Dataset',
+    title: 'RFC 4180 CSV Dataset Studio',
+    body: 'Compile, filter, and export clean RFC 4180 CSV telemetry records. This ground-truth dataset serves as the direct training input for Site 2 Machine Learning predictive inference.',
+    actionLabel: 'Finish Walkthrough'
+  }
+];
 
-  const steps = [
-    {
-      title: "Welcome to PerfOracle",
-      subtitle: "Two-Site Algorithmic Evaluation & Machine Learning Platform",
-      badge: "Project Architecture",
-      icon: Sparkles,
-      content: (
-        <div className="space-y-3 text-xs text-zinc-300 leading-relaxed">
-          <p>
-            PerfOracle is designed to solve a central problem in computer science: <strong className="text-white">Empirically evaluating and predicting algorithmic performance</strong>.
-          </p>
-          <div className="p-3 rounded-xl bg-white/[0.04] border border-white/10 space-y-1.5 font-mono text-[11px]">
-            <div className="text-white font-bold flex items-center gap-1.5">
-              <span>● Site 1 (Current Platform)</span>
-            </div>
-            <p className="text-zinc-400">
-              Registers algorithms, classifies them into performance tiers under defined rubrics, records testing telemetry, and compiles a normalized CSV dataset.
-            </p>
-            <div className="text-zinc-400 font-bold flex items-center gap-1.5 pt-1">
-              <span>○ Site 2 (Phase 2 ML Model)</span>
-            </div>
-            <p className="text-zinc-400">
-              Consumes the Site 1 dataset to train predictive machine learning regressors forecasting performance for any arbitrary input size.
-            </p>
-          </div>
-        </div>
-      )
-    },
-    {
-      title: "Left Sidebar Navigation",
-      subtitle: "Seamless control across all core benchmark modules",
-      badge: "Navigation",
-      icon: Cpu,
-      content: (
-        <div className="space-y-3 text-xs text-zinc-300 leading-relaxed">
-          <p>
-            The new left sidebar gives you instant access to all core platform modules without clunky tabs:
-          </p>
-          <ul className="space-y-2 text-zinc-400">
-            <li className="flex items-start gap-2">
-              <strong className="text-white font-mono min-w-[130px]">1. Overview:</strong>
-              <span>High-level platform health, domain breakdown, and recent runs.</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <strong className="text-white font-mono min-w-[130px]">2. Algo Registry:</strong>
-              <span>Asymptotic catalog of algorithms with Big-O notations and code.</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <strong className="text-white font-mono min-w-[130px]">3. Tier Matrix:</strong>
-              <span>Empirical classification into Tier S through Tier D bands.</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <strong className="text-white font-mono min-w-[130px]">4. Rubric Benchmarks:</strong>
-              <span>Live testing console with interactive metric sliders and simulations.</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <strong className="text-white font-mono min-w-[130px]">5. Dataset Studio:</strong>
-              <span>RFC 4180 CSV builder and feature exporter for Phase 2 ML.</span>
-            </li>
-          </ul>
-        </div>
-      )
-    },
-    {
-      title: "Algorithm Registry & Big-O",
-      subtitle: "Cataloging asymptotic bounds & runtime characteristics",
-      badge: "Algorithm Specs",
-      icon: Cpu,
-      content: (
-        <div className="space-y-3 text-xs text-zinc-300 leading-relaxed">
-          <p>
-            Every algorithm is documented with theoretical time and space complexities:
-          </p>
-          <div className="grid grid-cols-2 gap-2 text-[11px] font-mono p-3 rounded-xl bg-black/40 border border-white/10">
-            <div>
-              <span className="text-zinc-500 block uppercase text-[9px]">Time Complexity</span>
-              <span className="text-white font-bold">O(n log n), O(V+E), O(n^2)</span>
-            </div>
-            <div>
-              <span className="text-zinc-500 block uppercase text-[9px]">Memory Model</span>
-              <span className="text-white font-bold">In-Place vs Auxiliary</span>
-            </div>
-          </div>
-          <p className="text-zinc-400">
-            You can search algorithms, switch between Grid and Table views, inspect reference pseudocode, or click <strong className="text-white">"Register Algorithm"</strong> to add your own custom algorithm.
-          </p>
-        </div>
-      )
-    },
-    {
-      title: "Rubric Benchmarking & Telemetry",
-      subtitle: "Live composite scoring & hardware simulation",
-      badge: "Empirical Rubric",
-      icon: Sliders,
-      content: (
-        <div className="space-y-3 text-xs text-zinc-300 leading-relaxed">
-          <p>
-            The Rubric Benchmarking module calculates a live <strong className="text-white">0–100 composite score</strong>:
-          </p>
-          <div className="space-y-1.5 p-3 rounded-xl bg-white/[0.03] border border-white/10 font-mono text-[11px]">
-            <div className="flex justify-between text-zinc-400">
-              <span>• Execution Latency:</span>
-              <span className="text-white">Weight 35%</span>
-            </div>
-            <div className="flex justify-between text-zinc-400">
-              <span>• Peak RAM (RSS):</span>
-              <span className="text-white">Weight 25%</span>
-            </div>
-            <div className="flex justify-between text-zinc-400">
-              <span>• CPU Utilization & Stability:</span>
-              <span className="text-white">Weight 40%</span>
-            </div>
-          </div>
-          <p className="text-zinc-400">
-            Click <strong className="text-white">"Simulate Telemetry"</strong> to sample hardware metrics based on the algorithm's actual Big-O curve, then hit <strong className="text-white">"Commit to Dataset"</strong> to save the run!
-          </p>
-        </div>
-      )
-    },
-    {
-      title: "Dataset Studio & Phase 2 ML Handoff",
-      subtitle: "Exporting clean training observations",
-      badge: "Dataset Pipeline",
-      icon: Database,
-      content: (
-        <div className="space-y-3 text-xs text-zinc-300 leading-relaxed">
-          <p>
-            All committed benchmark runs accumulate in the <strong className="text-white">Dataset Studio</strong>:
-          </p>
-          <div className="p-3 rounded-xl bg-white/[0.04] border border-white/10 space-y-2 text-[11px]">
-            <div className="flex items-center gap-2 text-white font-bold">
-              <CheckCircle className="w-4 h-4 text-white" />
-              <span>Full User Control over Features</span>
-            </div>
-            <p className="text-zinc-400">
-              Select or deselect feature columns (e.g. latency, input size, tier) before exporting.
-            </p>
-            <div className="flex items-center gap-2 text-white font-bold pt-1">
-              <CheckCircle className="w-4 h-4 text-white" />
-              <span>One-Click CSV Download</span>
-            </div>
-            <p className="text-zinc-400">
-              Generates an RFC 4180 standard CSV file ready to directly feed into Phase 2 for training regression and classification ML models!
-            </p>
-          </div>
-        </div>
-      )
+export default function TutorialTour({ 
+  isOpen, 
+  onClose, 
+  activeTab = 'overview', 
+  onNavigateTab 
+}) {
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [targetRect, setTargetRect] = useState(null);
+  const coachmarkRef = useRef(null);
+
+  const step = SITE1_TOUR_STEPS[currentStepIndex];
+  const StepIcon = step?.icon || Sparkles;
+
+  // Navigate to step's tab if not already on it
+  useEffect(() => {
+    if (!isOpen || !step) return;
+    if (activeTab !== step.tab && onNavigateTab) {
+      onNavigateTab(step.tab);
     }
-  ];
+  }, [isOpen, currentStepIndex, step, activeTab, onNavigateTab]);
 
-  const handleFinish = () => {
-    if (dontShowAgain) {
-      localStorage.setItem('perforacle_tutorial_dismissed', 'true');
-    }
-    onClose();
-  };
+  // Locate target element, auto-scroll smoothly to center it, and track position
+  useEffect(() => {
+    if (!isOpen || !step) return;
 
-  const handleSkip = () => {
-    localStorage.setItem('perforacle_tutorial_dismissed', 'true');
-    onClose();
-  };
+    let isMounted = true;
+    let animationFrameId;
+    let pollCount = 0;
+
+    const locateAndScroll = () => {
+      const el = document.querySelector(step.target);
+      if (!el) {
+        if (pollCount < 25 && isMounted) {
+          pollCount++;
+          setTimeout(locateAndScroll, 60);
+        }
+        return;
+      }
+
+      // Smoothly scroll the highlighted section into center/start of viewport
+      const isTall = el.offsetHeight > window.innerHeight * 0.75;
+      el.scrollIntoView({
+        behavior: 'smooth',
+        block: isTall ? 'start' : 'center',
+        inline: 'nearest'
+      });
+
+      // Track bounding rect smoothly during scroll animation (850ms duration)
+      const startTime = performance.now();
+      const trackPosition = () => {
+        if (!isMounted) return;
+        const currentEl = document.querySelector(step.target);
+        if (currentEl) {
+          const rect = currentEl.getBoundingClientRect();
+          setTargetRect({
+            top: rect.top,
+            left: rect.left,
+            width: rect.width,
+            height: rect.height,
+            bottom: rect.bottom,
+            right: rect.right
+          });
+        }
+        if (performance.now() - startTime < 850) {
+          animationFrameId = requestAnimationFrame(trackPosition);
+        }
+      };
+      animationFrameId = requestAnimationFrame(trackPosition);
+    };
+
+    // Delay slightly to give React time to mount tab components
+    const timer = setTimeout(locateAndScroll, 90);
+
+    const handleViewportChange = () => {
+      const currentEl = document.querySelector(step.target);
+      if (currentEl) {
+        const rect = currentEl.getBoundingClientRect();
+        setTargetRect({
+          top: rect.top,
+          left: rect.left,
+          width: rect.width,
+          height: rect.height,
+          bottom: rect.bottom,
+          right: rect.right
+        });
+      }
+    };
+
+    window.addEventListener('resize', handleViewportChange);
+    window.addEventListener('scroll', handleViewportChange, { passive: true, capture: true });
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      window.removeEventListener('resize', handleViewportChange);
+      window.removeEventListener('scroll', handleViewportChange, true);
+    };
+  }, [isOpen, currentStepIndex, step, activeTab]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      } else if (e.key === 'ArrowRight') {
+        handleNext();
+      } else if (e.key === 'ArrowLeft') {
+        handlePrev();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, currentStepIndex]);
 
   if (!isOpen) return null;
 
-  const current = steps[currentStep];
-  const StepIcon = current.icon;
+  const handleNext = () => {
+    if (currentStepIndex < SITE1_TOUR_STEPS.length - 1) {
+      setCurrentStepIndex(currentStepIndex + 1);
+    } else {
+      onClose();
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentStepIndex > 0) {
+      setCurrentStepIndex(currentStepIndex - 1);
+    }
+  };
+
+  // Compute smart, viewport-safe coachmark positioning
+  const getCoachmarkStyle = () => {
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const coachmarkWidth = Math.min(440, viewportWidth - 32);
+    const coachmarkHeight = coachmarkRef.current?.offsetHeight || 310;
+    const headerOffset = 65; // Height of sticky top header
+
+    if (!targetRect) {
+      return {
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        position: 'fixed',
+        width: `${coachmarkWidth}px`,
+        zIndex: 70
+      };
+    }
+
+    let top;
+    let left = targetRect.left + (targetRect.width / 2) - (coachmarkWidth / 2);
+    left = Math.max(16, Math.min(left, viewportWidth - coachmarkWidth - 16));
+
+    const spaceBelow = viewportHeight - targetRect.bottom;
+    const spaceAbove = targetRect.top - headerOffset;
+
+    if (spaceBelow >= coachmarkHeight + 16) {
+      // Preferred: Position below target
+      top = targetRect.bottom + 16;
+    } else if (spaceAbove >= coachmarkHeight + 16) {
+      // Preferred: Position above target
+      top = targetRect.top - coachmarkHeight - 16;
+    } else if (viewportWidth >= 1200 && viewportWidth - targetRect.right >= coachmarkWidth + 24) {
+      // Desktop: Side placement to the right
+      left = targetRect.right + 20;
+      top = Math.max(headerOffset + 16, Math.min(targetRect.top, viewportHeight - coachmarkHeight - 20));
+    } else if (viewportWidth >= 1200 && targetRect.left >= coachmarkWidth + 24) {
+      // Desktop: Side placement to the left
+      left = targetRect.left - coachmarkWidth - 20;
+      top = Math.max(headerOffset + 16, Math.min(targetRect.top, viewportHeight - coachmarkHeight - 20));
+    } else {
+      // Fallback: Dock safely above viewport bottom
+      top = Math.max(headerOffset + 12, viewportHeight - coachmarkHeight - 20);
+      left = Math.max(16, Math.min(viewportWidth - coachmarkWidth - 20, left));
+    }
+
+    return {
+      top: `${top}px`,
+      left: `${left}px`,
+      position: 'fixed',
+      width: `${coachmarkWidth}px`,
+      zIndex: 70
+    };
+  };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Frosted Backdrop */}
+    <div className="fixed inset-0 z-50 overflow-hidden select-none pointer-events-auto">
+      {/* SVG Spotlight Mask Cutout Overlay */}
+      <svg className="fixed inset-0 w-full h-full pointer-events-none z-50">
+        <defs>
+          <mask id="site1-tour-spotlight-mask">
+            {/* White background: dark overlay applies everywhere */}
+            <rect x="0" y="0" width="100%" height="100%" fill="white" />
+            {/* Black cutout: transparent hole revealing the target element */}
+            {targetRect && (
+              <rect
+                x={Math.max(0, targetRect.left - 10)}
+                y={Math.max(0, targetRect.top - 10)}
+                width={targetRect.width + 20}
+                height={targetRect.height + 20}
+                rx="16"
+                ry="16"
+                fill="black"
+              />
+            )}
+          </mask>
+        </defs>
+        
+        {/* Deep dark backdrop frosted overlay with cutout mask */}
+        <rect
+          x="0"
+          y="0"
+          width="100%"
+          height="100%"
+          fill="rgba(3, 4, 7, 0.86)"
+          mask="url(#site1-tour-spotlight-mask)"
+        />
+
+        {/* Luminous Specular Spotlight Ring around active element */}
+        {targetRect && (
+          <rect
+            x={Math.max(0, targetRect.left - 10)}
+            y={Math.max(0, targetRect.top - 10)}
+            width={targetRect.width + 20}
+            height={targetRect.height + 20}
+            rx="16"
+            ry="16"
+            fill="none"
+            stroke="rgba(255, 255, 255, 0.55)"
+            strokeWidth="2"
+            className="tour-pulse-ring"
+          />
+        )}
+      </svg>
+
+      {/* Backdrop click dismisses */}
       <div 
-        className="fixed inset-0 bg-black/85 backdrop-blur-md transition-opacity modal-backdrop" 
-        onClick={handleFinish}
+        className="fixed inset-0 z-50 pointer-events-auto"
+        onClick={onClose}
       />
 
-      {/* Tutorial Card (100% Solid Obsidian - High Contrast) */}
-      <div className="relative w-full max-w-lg rounded-2xl border-2 border-white/20 bg-[#0c0d14] p-6 text-white shadow-[0_30px_90px_rgba(0,0,0,0.98)] z-10 animate-in zoom-in-95 duration-200 modal-dialog-container">
-        {/* Top bar with glowing logo and Skip */}
-        <div className="flex items-center justify-between pb-4 border-b border-white/10">
-          <div className="flex items-center gap-2.5">
-            <img 
-              src="/perforacle_icon_square.png" 
-              alt="Logo" 
-              className="w-7 h-7 object-contain logo-glow" 
-            />
-            <span className="font-bold text-xs uppercase tracking-wider text-zinc-300 font-mono">
-              Guided Interactive Tour
+      {/* Floating High-Contrast Coachmark Card (100% Solid Obsidian - Zero Bleed) */}
+      <div 
+        ref={coachmarkRef}
+        style={getCoachmarkStyle()}
+        onClick={(e) => e.stopPropagation()}
+        className="fixed z-[70] bg-[#0c0d14] border-2 border-white/20 rounded-2xl p-6 text-white shadow-[0_25px_80px_rgba(0,0,0,0.98)] animate-in fade-in zoom-in-95 duration-200"
+      >
+        {/* Specular Edge Highlight */}
+        <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-white/35 to-transparent pointer-events-none" />
+
+        {/* Header: Step counter & Dismiss */}
+        <div className="flex items-center justify-between pb-3.5 border-b border-white/[0.12] mb-4">
+          <div className="flex items-center gap-2">
+            <span className="w-6 h-6 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-white">
+              <StepIcon className="w-3.5 h-3.5" />
+            </span>
+            <span className="text-xs font-mono tracking-widest uppercase text-zinc-300 font-bold">
+              Step {currentStepIndex + 1} of {SITE1_TOUR_STEPS.length}
+            </span>
+            <span className="text-[11px] font-mono text-white bg-white/10 px-2 py-0.5 rounded-md border border-white/20 font-medium">
+              {step.badge}
             </span>
           </div>
 
-          {/* Prominent Skip Button */}
           <button
-            onClick={handleSkip}
-            className="px-2.5 py-1 rounded-lg text-xs font-mono text-zinc-400 hover:text-white hover:bg-white/10 transition-colors flex items-center gap-1"
+            onClick={onClose}
+            className="p-1.5 rounded-lg text-zinc-400 hover:text-white bg-white/5 hover:bg-white/15 border border-white/10 transition-colors cursor-pointer"
+            aria-label="Skip walkthrough"
+            title="Skip tour (Esc)"
           >
-            <span>Skip Tour</span>
-            <X className="w-3.5 h-3.5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Step Header */}
-        <div className="mt-4 mb-3">
-          <div className="flex items-center justify-between gap-2 mb-1.5">
-            <Badge variant="mono" size="xs">{current.badge}</Badge>
-            <span className="text-[11px] font-mono text-zinc-500">
-              Step {currentStep + 1} of {steps.length}
-            </span>
-          </div>
-          <h3 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-            <StepIcon className="w-5 h-5 text-white" />
-            <span>{current.title}</span>
+        {/* Title & Body */}
+        <div className="space-y-2 mb-6">
+          <h3 className="text-lg font-bold font-display text-white tracking-tight leading-snug">
+            {step.title}
           </h3>
-          <p className="text-xs text-zinc-400 mt-0.5">{current.subtitle}</p>
+          <p className="text-sm text-zinc-200 leading-relaxed font-sans">
+            {step.body}
+          </p>
         </div>
 
-        {/* Step Body */}
-        <div className="min-h-[160px] py-2">
-          {current.content}
-        </div>
-
-        {/* Progress Dots */}
-        <div className="flex items-center justify-center gap-1.5 py-3">
-          {steps.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentStep(idx)}
-              className={`h-1.5 rounded-full transition-all ${
-                idx === currentStep ? 'w-6 bg-white' : 'w-1.5 bg-white/20 hover:bg-white/40'
-              }`}
-              aria-label={`Go to step ${idx + 1}`}
-            />
-          ))}
-        </div>
-
-        {/* Footer Navigation */}
-        <div className="pt-3 border-t border-white/10 flex items-center justify-between gap-3">
-          {/* Checkbox: Don't show again */}
-          <label className="flex items-center gap-2 text-[11px] text-zinc-400 cursor-pointer select-none">
-            <input
-              type="checkbox"
-              checked={dontShowAgain}
-              onChange={(e) => setDontShowAgain(e.target.checked)}
-              className="rounded border-white/20 bg-black text-white focus:ring-0 w-3.5 h-3.5"
-            />
-            <span>Don't show on start</span>
-          </label>
-
+        {/* Progress Dots + Navigation Buttons */}
+        <div className="flex items-center justify-between pt-2">
+          {/* Mini progress dots */}
           <div className="flex items-center gap-2">
-            {currentStep > 0 && (
+            {SITE1_TOUR_STEPS.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentStepIndex(idx)}
+                className={`h-2 rounded-full transition-all cursor-pointer ${
+                  idx === currentStepIndex 
+                    ? 'w-6 bg-white shadow-[0_0_10px_rgba(255,255,255,0.9)]' 
+                    : 'w-2 bg-white/30 hover:bg-white/50'
+                }`}
+                aria-label={`Go to step ${idx + 1}`}
+              />
+            ))}
+          </div>
+
+          {/* Action Controls */}
+          <div className="flex items-center gap-2.5">
+            {currentStepIndex > 0 && (
               <button
                 type="button"
-                onClick={() => setCurrentStep(currentStep - 1)}
-                className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-zinc-300 transition-colors flex items-center gap-1"
+                onClick={handlePrev}
+                className="px-3.5 py-2 rounded-xl text-xs font-mono font-semibold text-zinc-200 hover:text-white bg-white/10 hover:bg-white/15 border border-white/15 transition-all flex items-center gap-1.5 cursor-pointer"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Back</span>
+                <span>Prev</span>
               </button>
             )}
 
-            {currentStep < steps.length - 1 ? (
-              <button
-                type="button"
-                onClick={() => setCurrentStep(currentStep + 1)}
-                className="px-4 py-1.5 rounded-xl bg-white text-black font-bold text-xs uppercase tracking-wider hover:bg-zinc-200 transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(255,255,255,0.2)]"
-              >
-                <span>Next</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={handleFinish}
-                className="px-4 py-1.5 rounded-xl bg-white text-black font-extrabold text-xs uppercase tracking-wider hover:bg-zinc-200 transition-all flex items-center gap-1.5 shadow-[0_0_20px_rgba(255,255,255,0.3)]"
-              >
-                <span>Get Started</span>
-                <CheckCircle className="w-3.5 h-3.5" />
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={handleNext}
+              className="px-5 py-2.5 rounded-xl text-xs font-extrabold font-mono tracking-wider uppercase bg-white text-black hover:bg-zinc-100 transition-all flex items-center gap-2 cursor-pointer shadow-xl shadow-white/20"
+            >
+              <span>{currentStepIndex === SITE1_TOUR_STEPS.length - 1 ? 'Finish' : 'Next'}</span>
+              {currentStepIndex === SITE1_TOUR_STEPS.length - 1 ? (
+                <Check className="w-4 h-4 stroke-[3]" />
+              ) : (
+                <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Keyboard shortcut hint */}
+        <div className="mt-4 pt-3 border-t border-white/[0.08] flex items-center justify-between text-[11px] font-mono text-zinc-400">
+          <span>Use keyboard arrows</span>
+          <div className="flex items-center gap-1.5">
+            <kbd className="px-2 py-0.5 rounded bg-white/10 border border-white/15 text-zinc-300 text-[10px]">←</kbd>
+            <kbd className="px-2 py-0.5 rounded bg-white/10 border border-white/15 text-zinc-300 text-[10px]">→</kbd>
+            <kbd className="px-2 py-0.5 rounded bg-white/10 border border-white/15 text-zinc-300 text-[10px]">Esc</kbd>
           </div>
         </div>
       </div>

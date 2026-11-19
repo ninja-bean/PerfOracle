@@ -270,10 +270,8 @@ export default function App() {
         <TutorialTour
           isOpen={isTutorialOpen}
           onClose={() => setIsTutorialOpen(false)}
-          onNavigate={(tab) => {
-            setActiveSite('site1');
-            setSite1ActiveTab(tab);
-          }}
+          activeTab={site1ActiveTab}
+          onNavigateTab={setSite1ActiveTab}
         />
       )}
 

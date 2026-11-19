@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Modal from '../common/Modal';
 import Badge from '../common/Badge';
+import CustomSelect from '../common/CustomSelect';
 import { Sparkles, Brain, Cpu, TrendingUp, CheckCircle2, ArrowRight } from 'lucide-react';
 
 export default function Phase2TeaserModal({ isOpen, onClose, totalRecords, algorithms }) {
@@ -86,18 +87,16 @@ export default function Phase2TeaserModal({ isOpen, onClose, totalRecords, algor
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             <div>
-              <label className="text-zinc-400 block mb-1">Target Algorithm</label>
-              <select
+              <CustomSelect
+                label="Target Algorithm"
                 value={selectedAlgoName}
-                onChange={(e) => setSelectedAlgoName(e.target.value)}
-                className="w-full px-3 py-1.5 rounded-lg glass-input text-xs bg-[#111111]"
-              >
-                {algorithms.map(a => (
-                  <option key={a.id} value={a.name} className="bg-[#111111] text-white">
-                    {a.name}
-                  </option>
-                ))}
-              </select>
+                onChange={setSelectedAlgoName}
+                options={algorithms.map(a => ({
+                  value: a.name,
+                  label: a.name,
+                  badge: a.timeComplexity
+                }))}
+              />
             </div>
 
             <div>

@@ -83,7 +83,7 @@ export default function AlgorithmList({
       </div>
 
       {/* Filter and Search Bar */}
-      <GlassCard className="p-4 space-y-3.5">
+      <GlassCard data-tour="site1-algo-registry" className="p-4 space-y-3.5">
         <div className="flex flex-col sm:flex-row gap-3">
           {/* Search Input */}
           <div className="relative flex-1">

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Layers, ShieldCheck, Cpu, Sliders, ArrowUpDown, Info, Check } from 'lucide-react';
 import GlassCard from '../common/GlassCard';
 import Badge from '../common/Badge';
+import CustomSelect from '../common/CustomSelect';
 
 export default function TierMatrix({ 
   tiers, 
@@ -28,7 +29,7 @@ export default function TierMatrix({
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
+    <div data-tour="site1-tier-matrix" className="space-y-6 animate-in fade-in duration-300">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
@@ -154,17 +155,17 @@ export default function TierMatrix({
                       >
                         <span className="font-semibold text-white">{algo.name}</span>
                         <span className="text-zinc-500 text-[10px]">[{algo.timeComplexity}]</span>
-                        <select
-                          value={algo.defaultTier}
-                          onChange={(e) => onReassignTier(algo.id, e.target.value)}
-                          className="glass-input text-[11px] text-white rounded-lg px-2 py-1 focus:outline-none cursor-pointer border border-white/15"
-                        >
-                          {tiers.map((t) => (
-                            <option key={t.id} value={t.name} className="bg-[#121214] text-white">
-                              {t.name}
-                            </option>
-                          ))}
-                        </select>
+                        <div className="w-28">
+                          <CustomSelect
+                            value={algo.defaultTier}
+                            onChange={(newTier) => onReassignTier(algo.id, newTier)}
+                            options={tiers.map((t) => ({
+                              value: t.name,
+                              label: t.name,
+                              badge: t.name.split(' ')[1]
+                            }))}
+                          />
+                        </div>
                       </div>
                     ))}
                   </div>
