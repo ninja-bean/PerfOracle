@@ -12,7 +12,8 @@ import {
   Cpu, 
   Brain,
   ShieldCheck,
-  CheckCircle2
+  CheckCircle2,
+  Code2
 } from 'lucide-react';
 
 export default function PredictionCardModal({ isOpen, onClose, data }) {
@@ -20,7 +21,7 @@ export default function PredictionCardModal({ isOpen, onClose, data }) {
 
   if (!isOpen || !data) return null;
 
-  const { algo, hardware, language, n, model, prediction } = data;
+  const { algo, hardware, language, n, model, prediction, sourceCode, codeAnalysis } = data;
 
   const structuredJson = JSON.stringify({
     schema_version: '1.0.0',
@@ -38,7 +39,16 @@ export default function PredictionCardModal({ isOpen, onClose, data }) {
       algorithm: algo.name,
       theoretical_complexity: algo.theoretical,
       language: language.name,
-      input_size_n: n
+      input_size_n: n,
+      has_custom_source: !!sourceCode,
+      ast_analysis: codeAnalysis ? {
+        lines_of_code: codeAnalysis.linesOfCode,
+        max_loop_depth: codeAnalysis.maxLoopDepth,
+        cyclomatic_branches: codeAnalysis.cyclomaticBranches,
+        inferred_complexity: codeAnalysis.inferredComplexity,
+        confidence_score: codeAnalysis.confidenceScore,
+        memory_model: codeAnalysis.memoryModel
+      } : null
     },
     predictions: {
       model_id: model.id,
@@ -55,6 +65,20 @@ export default function PredictionCardModal({ isOpen, onClose, data }) {
     }
   }, null, 2);
 
+  const formatLatency = (ms) => {
+    if (ms < 1) return `${(ms * 1000).toFixed(0)} μs`;
+    if (ms < 1000) return `${ms.toFixed(2)} ms`;
+    if (ms < 60000) return `${(ms / 1000).toFixed(2)} s`;
+    if (ms < 3600000) return `${(ms / 60000).toFixed(1)} min`;
+    return `${(ms / 3600000).toFixed(1)} hrs`;
+  };
+
+  const formatEnergy = (mJ) => {
+    if (mJ < 1000) return `${mJ.toFixed(2)} mJ`;
+    if (mJ < 1000000) return `${(mJ / 1000).toFixed(2)} J`;
+    return `${(mJ / 1000000).toFixed(2)} kJ`;
+  };
+
   const handleCopy = () => {
     navigator.clipboard.writeText(structuredJson);
     setCopied(true);
@@ -66,7 +90,7 @@ export default function PredictionCardModal({ isOpen, onClose, data }) {
       isOpen={isOpen}
       onClose={onClose}
       title="PerfOracle Performance Card & Report"
-      subtitle="Structured prediction record exportable for research publications and CLI integration"
+      subtitle="Structured prediction record exportable for research publications and embedded verification"
       maxWidth="max-w-2xl"
     >
       <div className="space-y-6">
@@ -78,13 +102,18 @@ export default function PredictionCardModal({ isOpen, onClose, data }) {
           <div className="flex items-start justify-between border-b border-white/10 pb-4">
             <div className="flex items-center gap-3">
               <img 
-                src="/perforacle_bug_only.png" 
+                src="/perforacle_icon_square.png" 
                 alt="PerfOracle" 
                 className="w-8 h-8 object-contain logo-glow" 
               />
               <div>
-                <h3 className="text-base font-bold font-display tracking-tight text-white">
-                  {algo.name}
+                <h3 className="text-base font-bold font-display tracking-tight text-white flex items-center gap-2">
+                  <span>{algo.name}</span>
+                  {sourceCode && (
+                    <span className="text-[10px] font-mono bg-white/10 px-1.5 py-0.5 rounded text-zinc-300">
+                      User Uploaded
+                    </span>
+                  )}
                 </h3>
                 <span className="text-[11px] font-mono text-zinc-400">
                   Target: {hardware.name} ({hardware.arch}) · {language.name}
@@ -96,11 +125,25 @@ export default function PredictionCardModal({ isOpen, onClose, data }) {
             </Badge>
           </div>
 
+          {/* AST Extracted Tags if custom code */}
+          {codeAnalysis && (
+            <div className="flex flex-wrap items-center gap-2 text-[10.5px] font-mono bg-white/[0.03] p-2.5 rounded-xl border border-white/[0.06]">
+              <span className="text-zinc-500">AST Analysis:</span>
+              <span className="text-white font-bold">{codeAnalysis.inferredComplexity}</span>
+              <span className="text-zinc-600">·</span>
+              <span className="text-zinc-300">{codeAnalysis.maxLoopDepth} Loop Nesting</span>
+              <span className="text-zinc-600">·</span>
+              <span className="text-zinc-300">{codeAnalysis.linesOfCode} LOC</span>
+              <span className="text-zinc-600">·</span>
+              <span className="text-emerald-400 font-semibold">{(codeAnalysis.confidenceScore * 100).toFixed(0)}% Confidence</span>
+            </div>
+          )}
+
           {/* Key Metrics Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
             <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
               <span className="text-zinc-500 text-[10px] block uppercase">Runtime</span>
-              <span className="text-lg font-bold text-white block mt-0.5">{prediction.rawLatencyMs} ms</span>
+              <span className="text-lg font-bold text-white block mt-0.5">{formatLatency(prediction.rawLatencyMs)}</span>
               <span className="text-[9px] text-zinc-500">±{prediction.uncertaintyPct}% conf</span>
             </div>
 
@@ -112,7 +155,7 @@ export default function PredictionCardModal({ isOpen, onClose, data }) {
 
             <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
               <span className="text-zinc-500 text-[10px] block uppercase">Energy</span>
-              <span className="text-lg font-bold text-white block mt-0.5">{prediction.energyMilliJoules} mJ</span>
+              <span className="text-lg font-bold text-white block mt-0.5">{formatEnergy(prediction.energyMilliJoules)}</span>
               <span className="text-[9px] text-zinc-500">{prediction.powerWatts}W TDP</span>
             </div>
 
