@@ -88,14 +88,14 @@ export default function Sidebar({
       items: [
         {
           id: 'overview',
-          label: 'Predictor Overview',
+          label: 'Overview',
           icon: Brain,
           badge: 'v1.0',
           description: 'ML model intelligence summary'
         },
         {
           id: 'sandbox',
-          label: 'Inference Sandbox',
+          label: 'Code Sandbox',
           icon: Sliders,
           badge: 'Live',
           description: 'Multi-target live forecasts'
@@ -107,14 +107,14 @@ export default function Sidebar({
       items: [
         {
           id: 'scaling',
-          label: 'Scaling & Log-Log Plot',
+          label: 'Scaling Curves',
           icon: TrendingUp,
           badge: 'R²≥0.99',
           description: 'Empirical vs Big-O curves'
         },
         {
           id: 'hardware',
-          label: 'Hardware Guardrails',
+          label: 'Hardware Limits',
           icon: HardDrive,
           badge: 'OOM Wall',
           description: 'ESP8266 to M5 RAM ceilings'
@@ -126,7 +126,7 @@ export default function Sidebar({
       items: [
         {
           id: 'models',
-          label: 'Model Leaderboard',
+          label: 'Leaderboard',
           icon: Award,
           badge: 'Parity 45°',
           description: 'Ablation study & calibration'

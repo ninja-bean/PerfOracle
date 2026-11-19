@@ -3,6 +3,7 @@ export const hardwareTargets = [
   {
     id: 'esp8266',
     name: 'ESP8266',
+    shortName: 'ESP8266',
     category: 'MCU',
     arch: 'Xtensa L106 32-bit',
     clockMhz: 160,
@@ -17,6 +18,7 @@ export const hardwareTargets = [
   {
     id: 'esp32',
     name: 'ESP32 (Classic)',
+    shortName: 'ESP32',
     category: 'MCU',
     arch: '2× Xtensa LX6 32-bit',
     clockMhz: 240,
@@ -31,6 +33,7 @@ export const hardwareTargets = [
   {
     id: 'rpi-zero2w',
     name: 'Raspberry Pi Zero 2 W',
+    shortName: 'RPi Zero 2 W',
     category: 'SBC',
     arch: '4× Cortex-A53 64-bit',
     clockMhz: 1000,
@@ -45,6 +48,7 @@ export const hardwareTargets = [
   {
     id: 'rpi5',
     name: 'Raspberry Pi 5',
+    shortName: 'RPi 5',
     category: 'SBC',
     arch: '4× Cortex-A76 64-bit',
     clockMhz: 2400,
@@ -59,6 +63,7 @@ export const hardwareTargets = [
   {
     id: 'm5-workstation',
     name: 'Apple M5 / Workstation',
+    shortName: 'Apple M5',
     category: 'Desktop/Edge AI',
     arch: 'ARMv9.4-A High Performance',
     clockMhz: 4200,

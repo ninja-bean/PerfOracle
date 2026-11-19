@@ -417,22 +417,26 @@ export default function InferenceSandbox({ onOpenReportCard }) {
               Execution Environment & Scale
             </span>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Custom Hardware Target Dropdown */}
-              <CustomSelect
-                label="Physical Hardware Target"
-                value={selectedHardwareId}
-                onChange={setSelectedHardwareId}
-                options={hardwareOptions}
-              />
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+              {/* Custom Hardware Target Dropdown (wider for full device names) */}
+              <div className="md:col-span-7">
+                <CustomSelect
+                  label="Physical Hardware Target"
+                  value={selectedHardwareId}
+                  onChange={setSelectedHardwareId}
+                  options={hardwareOptions}
+                />
+              </div>
 
               {/* Custom Language Runtime Dropdown */}
-              <CustomSelect
-                label="Language Runtime"
-                value={selectedLanguageId}
-                onChange={setSelectedLanguageId}
-                options={languageOptions}
-              />
+              <div className="md:col-span-5">
+                <CustomSelect
+                  label="Language Runtime"
+                  value={selectedLanguageId}
+                  onChange={setSelectedLanguageId}
+                  options={languageOptions}
+                />
+              </div>
             </div>
 
             {/* Model Estimator Selector */}

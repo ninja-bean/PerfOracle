@@ -134,9 +134,9 @@ export default function ScalingCurvePlot() {
       {/* Main Curve Card */}
       <GlassCard>
         {/* Controls row with Custom Selects */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-white/[0.06]">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6 pb-4 border-b border-white/[0.06]">
           <div className="flex flex-wrap items-center gap-4">
-            <div className="w-64">
+            <div className="w-full sm:w-72 md:w-80">
               <CustomSelect
                 label="Target Algorithm"
                 value={selectedAlgoId}
@@ -145,7 +145,7 @@ export default function ScalingCurvePlot() {
               />
             </div>
 
-            <div className="w-60">
+            <div className="w-full sm:w-80 md:w-[360px]">
               <CustomSelect
                 label="Hardware Target"
                 value={selectedHardwareId}

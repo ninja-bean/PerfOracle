@@ -191,7 +191,7 @@ export default function CustomSelect({
           role="listbox"
           tabIndex={-1}
           aria-labelledby={`${id}-label`}
-          className="absolute top-full left-0 right-0 mt-2 z-50 p-1.5 rounded-2xl glass-surface-l3 max-h-64 overflow-y-auto space-y-1 animate-in fade-in zoom-in-95 duration-150"
+          className="absolute top-full left-0 mt-2 z-50 p-2 rounded-2xl glass-surface-l3 max-h-80 overflow-y-auto space-y-1.5 animate-in fade-in zoom-in-95 duration-150 w-full min-w-full sm:min-w-[380px] max-w-lg shadow-[0_25px_70px_rgba(0,0,0,0.9)] border border-white/20"
         >
           {options.map((opt, index) => {
             const isSelected = opt.value === value;
@@ -209,7 +209,7 @@ export default function CustomSelect({
                   triggerRef.current?.focus();
                 }}
                 onMouseEnter={() => setHighlightedIndex(index)}
-                className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs cursor-pointer transition-all duration-150 ${
+                className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs cursor-pointer transition-all duration-150 ${
                   isSelected
                     ? 'bg-white/[0.12] text-white border border-white/[0.2] shadow-[inset_0_1px_0_rgba(255,255,255,0.25)]'
                     : isHighlighted
@@ -217,30 +217,30 @@ export default function CustomSelect({
                       : 'text-zinc-300 border border-transparent hover:bg-white/[0.04]'
                 }`}
               >
-                <div className="min-w-0 pr-2">
-                  <div className="flex items-center gap-2 truncate">
-                    <span className={`truncate font-medium ${isSelected ? 'text-white font-semibold' : 'text-zinc-200'}`}>
+                <div className="min-w-0 pr-3 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className={`font-medium ${isSelected ? 'text-white font-semibold' : 'text-zinc-200'}`}>
                       {opt.label}
                     </span>
                     {opt.sub && (
-                      <span className={`text-[10px] ${isSelected ? 'text-zinc-300' : 'text-zinc-400'}`}>
-                        {opt.sub}
+                      <span className={`text-[10px] ${isSelected ? 'text-zinc-300 font-semibold' : 'text-zinc-400'}`}>
+                        ({opt.sub})
                       </span>
                     )}
                   </div>
                   {opt.desc && (
-                    <div className="text-[10px] text-zinc-400 truncate mt-0.5 font-mono">
+                    <div className="text-[10.5px] text-zinc-400 mt-1 font-mono leading-tight">
                       {opt.desc}
                     </div>
                   )}
                 </div>
 
-                <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                <div className="flex items-center gap-2 shrink-0 ml-3">
                   {opt.tag && (
-                    <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded-md ${
+                    <span className={`text-[9.5px] font-mono px-2 py-0.5 rounded-md ${
                       isSelected 
-                        ? 'bg-white/20 text-white font-bold' 
-                        : 'bg-white/[0.05] text-zinc-400 border border-white/[0.08]'
+                        ? 'bg-white/20 text-white font-bold border border-white/30' 
+                        : 'bg-white/[0.06] text-zinc-300 border border-white/[0.1]'
                     }`}>
                       {opt.tag}
                     </span>

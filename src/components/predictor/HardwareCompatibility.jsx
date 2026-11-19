@@ -48,8 +48,8 @@ export default function HardwareCompatibility() {
           </p>
         </div>
 
-        {/* Algorithm Custom Dropdown */}
-        <div className="w-72">
+        {/* Algorithm Custom Dropdown (wide) */}
+        <div className="w-full sm:w-80 md:w-96">
           <CustomSelect
             value={selectedAlgoId}
             onChange={setSelectedAlgoId}

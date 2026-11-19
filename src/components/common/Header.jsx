@@ -29,11 +29,11 @@ export default function Header({
   };
 
   const site2Titles = {
-    overview: { title: 'Predictor Overview',      crumb: 'Neural Engine' },
-    sandbox:  { title: 'Inference Sandbox',       crumb: 'Workload Simulation' },
-    scaling:  { title: 'Scaling & Log-Log Plot',  crumb: 'Asymptotic Regression' },
-    hardware: { title: 'Hardware Guardrails',     crumb: 'Memory Walls' },
-    models:   { title: 'Model Leaderboard',       crumb: 'Parity Calibration' }
+    overview: { title: 'Overview',            crumb: 'Neural Engine' },
+    sandbox:  { title: 'Code Sandbox',        crumb: 'Workload Simulation' },
+    scaling:  { title: 'Scaling Curves',      crumb: 'Asymptotic Regression' },
+    hardware: { title: 'Hardware Limits',     crumb: 'Memory Walls' },
+    models:   { title: 'Leaderboard',         crumb: 'Parity Calibration' }
   };
 
   const current = activeSite === 'site2' 

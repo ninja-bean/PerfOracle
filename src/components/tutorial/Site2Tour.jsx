@@ -52,7 +52,7 @@ export const SITE2_TOUR_STEPS = [
     badge: 'Hardware Constraints',
     title: 'SRAM Memory Walls & OOM Guardrails',
     body: '"Does it fit?" strictly precedes "How fast is it?". The visual MemoryTape calculates active payload vs physical SRAM ceilings. Notice how ESP8266 (80KB limit) triggers a hard red OOM breach at N=25,000 while ESP32 and Pi Zero remain safe.',
-    actionLabel: 'Check Model Leaderboard'
+    actionLabel: 'Check Leaderboard'
   },
   {
     id: 'model-parity',
