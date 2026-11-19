@@ -359,11 +359,11 @@ export default function Sidebar({
     <>
       {/* Desktop Persistent Sidebar Rail */}
       <aside 
-        className={`hidden lg:flex sticky top-0 h-screen shrink-0 flex-col justify-between z-30 transition-all duration-300 glass-surface-l1 ${
+        className={`hidden lg:flex sticky top-0 h-screen shrink-0 flex-col justify-between z-30 transition-all duration-300 bg-[#08090d] glass-surface-l1 ${
           isCollapsed ? 'w-20' : 'w-64'
         }`}
         style={{
-          borderRight: '1px solid rgba(255,255,255,0.08)'
+          borderRight: '1px solid rgba(255,255,255,0.1)'
         }}
       >
         {sidebarContent}
@@ -374,12 +374,12 @@ export default function Sidebar({
         <>
           <div 
             onClick={onClose}
-            className="fixed inset-0 bg-black/80 backdrop-blur-md z-40 lg:hidden"
+            className="fixed inset-0 bg-black/85 backdrop-blur-md z-40 lg:hidden"
           />
           <aside 
-            className="fixed top-0 bottom-0 left-0 z-50 w-64 flex flex-col justify-between lg:hidden shadow-2xl glass-surface-l1"
+            className="fixed top-0 bottom-0 left-0 z-50 w-64 flex flex-col justify-between lg:hidden shadow-2xl bg-[#08090d] glass-surface-l1"
             style={{
-              borderRight: '1px solid rgba(255,255,255,0.12)'
+              borderRight: '1px solid rgba(255,255,255,0.14)'
             }}
           >
             {sidebarContent}

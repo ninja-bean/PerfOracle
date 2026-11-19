@@ -192,8 +192,8 @@ export default function TutorialTour({ isOpen, onClose, onNavigate }) {
         onClick={handleFinish}
       />
 
-      {/* Tutorial Card */}
-      <div className="relative w-full max-w-lg rounded-2xl border border-white/20 bg-[#0e0e11]/95 p-6 text-white shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] backdrop-blur-2xl z-10 animate-in zoom-in-95 duration-200 modal-dialog-container">
+      {/* Tutorial Card (100% Solid Obsidian - High Contrast) */}
+      <div className="relative w-full max-w-lg rounded-2xl border-2 border-white/20 bg-[#0c0d14] p-6 text-white shadow-[0_30px_90px_rgba(0,0,0,0.98)] z-10 animate-in zoom-in-95 duration-200 modal-dialog-container">
         {/* Top bar with glowing logo and Skip */}
         <div className="flex items-center justify-between pb-4 border-b border-white/10">
           <div className="flex items-center gap-2.5">
